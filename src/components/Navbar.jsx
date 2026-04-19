@@ -12,6 +12,27 @@ export default function Navbar({
 }) {
   return (
     <nav style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(253,248,245,0.96)', backdropFilter: 'blur(8px)', borderBottom: `1px solid ${G.bdr}`, fontFamily: FONT }}>
+      <style>{`
+        @media (max-width: 767px) {
+          .side-menu {
+            position: fixed !important;
+            top: 0 !important;
+            bottom: 0 !important;
+            width: 280px !important;
+            background: #FFFBF8 !important;
+            z-index: 9999 !important;
+            box-shadow: -4px 0 24px rgba(44,24,16,0.15) !important;
+            padding: 24px !important;
+            overflow-y: auto !important;
+          }
+          .menu-overlay {
+            position: fixed !important;
+            inset: 0 !important;
+            background: rgba(0,0,0,0.4) !important;
+            z-index: 9998 !important;
+          }
+        }
+      `}</style>
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 20px', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between', direction: isRTL ? 'rtl' : 'ltr' }}>
 
         {/* Brand */}
@@ -73,7 +94,8 @@ export default function Navbar({
       {menu && (
         <>
           <div
-            style={{ position: 'fixed', top: 0, right: isRTL ? 'auto' : 0, left: isRTL ? 0 : 'auto', bottom: 0, width: 280, background: G.white, zIndex: 200, boxShadow: '-4px 0 24px rgba(44,24,16,0.12)', padding: 24, direction: isRTL ? 'rtl' : 'ltr' }}
+            className="side-menu"
+            style={{ position: 'fixed', top: 0, right: isRTL ? 'auto' : 0, left: isRTL ? 0 : 'auto', bottom: 0, width: 280, background: '#FFFBF8', zIndex: 9999, boxShadow: '-4px 0 24px rgba(44,24,16,0.15)', padding: 24, direction: isRTL ? 'rtl' : 'ltr' }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
               <Logo size={22} />
@@ -90,7 +112,7 @@ export default function Navbar({
               </button>
             </div>
           </div>
-          <div onClick={() => setMenu(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.3)', zIndex: 190 }} />
+          <div className="menu-overlay" onClick={() => setMenu(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 9998 }} />
         </>
       )}
     </nav>

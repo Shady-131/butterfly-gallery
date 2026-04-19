@@ -67,14 +67,45 @@ export default function Checkout({ lang, tr, isRTL, cart, coForm, setCoForm, tot
 
   return (
     <div style={{ maxWidth: 900, margin: '0 auto', padding: '40px 20px', fontFamily: FONT, direction: isRTL ? 'rtl' : 'ltr' }}>
+      <style>{`
+        @media (max-width: 1023px) {
+          .checkout-layout {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 28px !important;
+            align-items: start !important;
+          }
+          .checkout-summary {
+            position: relative !important;
+            top: auto !important;
+            width: 100% !important;
+            order: 2 !important;
+          }
+          .checkout-form {
+            order: 1 !important;
+          }
+        }
+        @media (min-width: 1024px) {
+          .checkout-layout {
+            display: grid !important;
+            grid-template-columns: 1fr 320px !important;
+            gap: 28px !important;
+            align-items: start !important;
+          }
+          .checkout-summary {
+            position: relative !important;
+            top: auto !important;
+          }
+        }
+      `}</style>
       <button onClick={() => nav('cart')} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', color: G.textM, fontSize: 13, marginBottom: 24, fontFamily: FONT, padding: 0 }}>
         ← {tr.co.back}
       </button>
       <h1 style={{ fontFamily: SERIF, fontSize: 34, color: G.text, marginBottom: 6 }}>{tr.co.title}</h1>
       <div style={{ height: 2, width: 40, background: G.gold, marginBottom: 32 }} />
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 28, alignItems: 'start' }}>
-        <div>
+      <div className="checkout-layout">
+        <div className="checkout-form">
           {textFields.map(({ label, key, type }) => (
             <div key={key} style={{ marginBottom: 18 }}>
               <label style={{ display: 'block', color: G.textM, fontSize: 13, fontWeight: 500, marginBottom: 6 }}>{label}</label>
@@ -307,7 +338,7 @@ export default function Checkout({ lang, tr, isRTL, cart, coForm, setCoForm, tot
         </div>
 
         {/* Order summary */}
-        <div style={{ background: G.pinkL, borderRadius: 10, padding: 20, border: `1px solid ${G.bdr}` }}>
+        <div className="checkout-summary" style={{ background: G.pinkL, borderRadius: 10, padding: 20, border: `1px solid ${G.bdr}` }}>
           <p style={{ fontFamily: SERIF, fontSize: 18, color: G.text, marginBottom: 16 }}>{tr.cart.sum}</p>
           {cart.map(i => (
             <div key={i.id} style={{ display: 'flex', gap: 10, marginBottom: 12, alignItems: 'center' }}>
