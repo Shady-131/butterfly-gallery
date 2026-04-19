@@ -309,7 +309,12 @@ function ProductsPage({ products, onAdd, onUpdate, onDelete, success, error }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
-    ar: '', en: '', price: '', category: 'jewelry', img: ''
+     ar: '', 
+    en: '', 
+    price: '', 
+    category: 'jewelry', 
+    img: '', 
+    cat: 'jewelry' 
   });
 
   const handleSubmit = async () => {

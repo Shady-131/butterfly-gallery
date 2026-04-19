@@ -25,15 +25,47 @@ export default function Cart({ lang, tr, isRTL, cart, rmCart, updQty, sub, disc,
 
   return (
     <div style={{ maxWidth: 1000, margin: '0 auto', padding: '40px 20px', fontFamily: FONT, direction: isRTL ? 'rtl' : 'ltr' }}>
+      <style>{`
+        @media (max-width: 1023px) {
+          .cart-layout {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 28px !important;
+          }
+          .cart-summary {
+            position: relative !important;
+            top: auto !important;
+            width: 100% !important;
+          }
+          .price-col {
+            display: none !important;
+          }
+        }
+        @media (min-width: 1024px) {
+          .cart-layout {
+            display: grid !important;
+            grid-template-columns: 1fr 360px !important;
+            gap: 28px !important;
+            align-items: start !important;
+          }
+          .cart-summary {
+            position: sticky !important;
+            top: 80px !important;
+          }
+          .price-col {
+            display: block !important;
+          }
+        }
+      `}</style>
       <h1 style={{ fontFamily: SERIF, fontSize: 34, fontWeight: 600, color: G.text, marginBottom: 6 }}>{tr.cart.title}</h1>
       <div style={{ height: 2, width: 40, background: G.gold, marginBottom: 32 }} />
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 28, alignItems: 'start' }}>
+      <div className="cart-layout">
 
         {/* Items */}
         <div>
           {cart.map(item => (
-            <div key={item.id} style={{ display: 'flex', gap: 16, padding: '16px 0', borderBottom: `1px solid ${G.bdr}`, alignItems: 'center' }}>
-              <img src={item.img} alt="" style={{ width: 80, height: 80, borderRadius: 8, objectFit: 'cover', border: `1px solid ${G.bdr}`, cursor: 'pointer' }} onClick={() => nav('product', item)} />
+            <div key={item.id} style={{ display: 'flex', gap: 16, padding: '16px 0', borderBottom: `1px solid ${G.bdr}`, alignItems: 'flex-start' }}>
+              <img src={item.img} alt="" style={{ width: 70, height: 70, minWidth: 70, borderRadius: 8, objectFit: 'cover', border: `1px solid ${G.bdr}`, cursor: 'pointer' }} onClick={() => nav('product', item)} />
               <div style={{ flex: 1 }}>
                 <p style={{ color: G.text, fontWeight: 500, fontSize: 15, margin: '0 0 4px', cursor: 'pointer' }} onClick={() => nav('product', item)}>{lang === 'ar' ? item.ar : item.en}</p>
                 <p style={{ color: G.gold, fontWeight: 600, fontSize: 15, margin: '0 0 10px' }}>{item.price.toLocaleString()} {tr.curr}</p>
@@ -48,13 +80,13 @@ export default function Cart({ lang, tr, isRTL, cart, rmCart, updQty, sub, disc,
                   </button>
                 </div>
               </div>
-              <p style={{ color: G.text, fontWeight: 600, fontSize: 15 }}>{(item.price * item.qty).toLocaleString()} {tr.curr}</p>
+              <p style={{ color: G.text, fontWeight: 600, fontSize: 15, minWidth: 80, textAlign: 'right', display: 'none' }} className="price-col">{(item.price * item.qty).toLocaleString()} {tr.curr}</p>
             </div>
           ))}
         </div>
 
         {/* Summary */}
-        <div style={{ background: G.pinkL, borderRadius: 10, padding: 24, border: `1px solid ${G.bdr}`, position: 'sticky', top: 80 }}>
+        <div className="cart-summary" style={{ background: G.pinkL, borderRadius: 10, padding: 24, border: `1px solid ${G.bdr}` }}>
           <p style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 600, color: G.text, marginBottom: 20 }}>{tr.cart.sum}</p>
           <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
             <input value={discCode} onChange={e => setDiscCode(e.target.value.toUpperCase())} placeholder={tr.cart.disc}
