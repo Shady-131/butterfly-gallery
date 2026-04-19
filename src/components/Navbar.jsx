@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Search, Globe, Heart, ShoppingBag, Menu, X, User } from 'lucide-react';
 import Logo from './ui/Logo';
 import { G, FONT } from '../constants/data';

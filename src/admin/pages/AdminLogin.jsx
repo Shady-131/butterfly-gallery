@@ -7,7 +7,7 @@ import { Lock, Mail } from 'lucide-react';
 export default function AdminLogin() {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const { error: toastError } = useToast();
+  const { error: toastErrorMsg } = useToast();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

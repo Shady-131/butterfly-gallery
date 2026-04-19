@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useAppData } from '../../context/AppDataContext';
 import { useToast } from '../../context/ToastContext';
-import { Menu, X, LogOut, LayoutDashboard, Box, ShoppingCart, Settings, BarChart3, ChevronRight, Plus, Edit, Trash2, Eye } from 'lucide-react';
-import { AdminHeader, DataTable, FormInput, FormTextarea, Badge, Modal } from '../components/AdminComponents';
+import { LogOut, LayoutDashboard, Box, ShoppingCart, Settings, BarChart3, ChevronRight, Plus, Edit, Trash2 } from 'lucide-react';
+import { AdminHeader, DataTable, FormInput, Badge, Modal } from '../components/AdminComponents';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -309,7 +309,7 @@ function ProductsPage({ products, onAdd, onUpdate, onDelete, success, error }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
-    ar: '', en: '', price: '', category: 'jewelry', img: '', cat: 'jewelry', ar: '', en: ''
+    ar: '', en: '', price: '', category: 'jewelry', img: ''
   });
 
   const handleSubmit = async () => {

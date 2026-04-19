@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { InstagramIcon } from '../components/ui/SocialIcons';
 import ProductCard from '../components/ProductCard';
 import Stars       from '../components/ui/Stars';
