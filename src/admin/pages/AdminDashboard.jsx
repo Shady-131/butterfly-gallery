@@ -5,7 +5,7 @@ import { useAppData } from '../../context/AppDataContext';
 import { useToast } from '../../context/ToastContext';
 import { LogOut, LayoutDashboard, Box, ShoppingCart, Settings, BarChart3, ChevronRight, Plus, Edit, Trash2, Package, Clock, CheckCircle, Search, Menu, Info, History } from 'lucide-react';
 import { AdminHeader, DataTable, FormInput, FormTextarea, Badge, Modal, AdminSelect } from '../components/AdminComponents';
-import { ORDER_STATUSES, STATUS_LABELS, SOCIAL_MEDIA, formatPrice, FONT, BRAND } from '../../constants/data';
+import { ORDER_STATUSES, STATUS_LABELS, SOCIAL_MEDIA, STORE_WHATSAPP, formatPrice, FONT, BRAND } from '../../constants/data';
 import { auditLogService, logAdminAction } from '../../services/database';
 import SiteLogo from '../../components/ui/Logo';
 import PriceText from '../../components/ui/PriceText';
@@ -584,6 +584,9 @@ function ProductsPage({ products, onAdd, onUpdate, onDelete, success, error, log
         title={editingId ? 'Edit Product' : 'Add New Product'}
         onClose={() => setIsModalOpen(false)}
       >
+        {/* Two-column rows collapse to a single column on ~360px phones so inputs
+            never get cramped; desktop keeps the side-by-side layout. */}
+        <style>{`.admin-modal-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media (max-width:480px){.admin-modal-2col{grid-template-columns:1fr}}`}</style>
         <FormInput
           label="Product Name (Arabic)"
           name="ar"
@@ -600,7 +603,7 @@ function ProductsPage({ products, onAdd, onUpdate, onDelete, success, error, log
           placeholder="Product name"
           required
         />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+        <div className="admin-modal-2col">
           <FormInput
             label="Price (EGP)"
             name="price"
@@ -666,7 +669,7 @@ function ProductsPage({ products, onAdd, onUpdate, onDelete, success, error, log
           placeholder="Product description in English"
           rows={3}
         />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+        <div className="admin-modal-2col">
           <FormInput
             label="Stock (optional)"
             name="stock"
@@ -1024,6 +1027,16 @@ function SettingsPage({ settings, onUpdate, onUpdateSocial, success, error, log 
         <p style={{ fontSize: '12px', color: '#9B8878', margin: '-8px 0 0' }}>
           Digits only, no + sign. Example: <strong>201012345678</strong> (country code + number). Used by the storefront's floating WhatsApp button.
         </p>
+        {(() => {
+          const wa = String(socialData.whatsapp || '').replace(/[^0-9]/g, '');
+          const isPlaceholder = !wa || wa === STORE_WHATSAPP;
+          if (!isPlaceholder) return null;
+          return (
+            <p style={{ fontSize: '12px', color: '#B45309', background: '#FEF3C7', border: '1px solid #FDE68A', borderRadius: '6px', padding: '8px 12px', margin: '10px 0 0' }}>
+              ⚠ This is a placeholder number ({STORE_WHATSAPP}). Replace it with the store's real WhatsApp number before going live.
+            </p>
+          );
+        })()}
 
         <div style={{ marginTop: '24px' }}>
           <button

@@ -99,8 +99,12 @@ export function DataTable({ columns, data, actions = [] }) {
           <p style={{ fontSize: '14px', margin: 0 }}>No data found</p>
         </div>
       ) : (
+        // Horizontal scroll on narrow phones so wide tables (e.g. Products with
+        // action buttons) never clip — desktop layout is unchanged.
+        <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
         <table style={{
           width: '100%',
+          minWidth: '640px',
           borderCollapse: 'collapse',
           fontSize: '14px',
         }}>
@@ -200,6 +204,7 @@ export function DataTable({ columns, data, actions = [] }) {
             ))}
           </tbody>
         </table>
+        </div>
       )}
     </div>
   );

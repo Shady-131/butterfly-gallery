@@ -49,6 +49,8 @@ import Logo from './components/ui/Logo';
 // Guests use the base key; logged-in customers use `<base>_<customerId>`.
 const CART_KEY = 'butterfly_gallery_cart';
 const WISH_KEY = 'butterfly_gallery_wishlist';
+// Welcome popup "seen" flag — shown once per browser (clear localStorage to reset for a demo).
+const WELCOME_SEEN_KEY = 'butterfly_gallery_welcome_seen';
 const cartKeyFor = (id) => (id ? `${CART_KEY}_${id}` : CART_KEY);
 const wishKeyFor = (id) => (id ? `${WISH_KEY}_${id}` : WISH_KEY);
 const loadStored = (key) => {
@@ -174,8 +176,18 @@ function Website() {
     // Global UI font (covers <body> and anything portalled outside the app root).
     document.body.style.fontFamily = FONT;
 
-    setTimeout(() => { setLoading(false); setTimeout(() => setPopup(true), 1500); }, 1800);
+    // Only surface the welcome popup once per browser (the "seen" flag persists in
+    // localStorage). Clearing localStorage resets it for a fresh demo run.
+    let welcomeSeen = false;
+    try { welcomeSeen = localStorage.getItem(WELCOME_SEEN_KEY) === '1'; } catch { welcomeSeen = false; }
+    setTimeout(() => { setLoading(false); if (!welcomeSeen) setTimeout(() => setPopup(true), 1500); }, 1800);
   }, []);
+
+  // Dismiss the welcome popup and remember it so it never re-shows on refresh.
+  const dismissPopup = () => {
+    try { localStorage.setItem(WELCOME_SEEN_KEY, '1'); } catch { /* ignore storage errors */ }
+    setPopup(false);
+  };
 
   // On login/logout switch carts between guest and per-customer storage.
   // (Runs before the persist effects below, so storageRef points at the right
@@ -295,8 +307,8 @@ function Website() {
       <QuickViewModal qv={qv} setQv={setQv} lang={lang} tr={tr} isRTL={isRTL} addCart={addCart} nav={nav} />
       <LoginModal open={loginOpen} onClose={() => setLoginOpen(false)} isRTL={isRTL} tr={tr} showToast={showToast} />
       <Popup
-        show={popup} onClose={() => setPopup(false)} tr={tr} isRTL={isRTL}
-        onClaim={() => { setDiscCode(tr.popup.code); setDiscApplied(true); setPopup(false); nav('shop'); }}
+        show={popup} onClose={dismissPopup} tr={tr} isRTL={isRTL}
+        onClaim={() => { setDiscCode(tr.popup.code); setDiscApplied(true); dismissPopup(); nav('shop'); }}
       />
     </div>
   );

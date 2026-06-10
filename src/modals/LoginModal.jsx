@@ -7,6 +7,7 @@ import { useCustomerAuth } from '../context/CustomerAuthContext';
 const errMsg = (code, a) => {
   switch (code) {
     case 'EMAIL_EXISTS':   return a.errEmailExists;
+    case 'ADMIN_EMAIL_RESERVED': return a.errAdminEmail;
     case 'NO_EMAIL':       return a.errNoEmail;
     case 'WRONG_PASSWORD': return a.errWrongPass;
     case 'MISSING_FIELDS': return a.errFields;

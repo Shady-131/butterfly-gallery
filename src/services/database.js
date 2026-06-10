@@ -144,6 +144,9 @@ export const customerAuthService = {
     const customers = customerAuthService.getCustomers();
     const cleanEmail = String(email || '').trim().toLowerCase();
     if (!name || !cleanEmail || !password) throw new Error('MISSING_FIELDS');
+    // Demo admin emails (Rana/Menna) are reserved for /admin/login — never let a
+    // customer register with one (keeps admin and customer auth clearly separate).
+    if (ADMIN_ACCOUNTS.some(a => a.email === cleanEmail)) throw new Error('ADMIN_EMAIL_RESERVED');
     if (customers.some(c => c.email === cleanEmail)) throw new Error('EMAIL_EXISTS');
 
     const customer = {
