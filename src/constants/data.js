@@ -59,7 +59,7 @@ export const TR = {
   ar: {
     brand:"Butterfly Gallery", tagline:"أناقة لا حدود لها", curr:"جنيه",
     nav:    { home:"الرئيسية", shop:"المتجر", about:"من نحن", contact:"تواصلي", wishlist:"المفضلة", cart:"السلة", login:"دخول", logout:"تسجيل الخروج", signup:"إنشاء حساب", myorders:"طلباتي", account:"حسابي", ph:"ابحثي..." },
-    hero:   { badge:"✦ كولكشن ربيع ٢٠٢٥", t1:"أناقتكِ", t2:"عالمنا", sub:"اكتشفي أجمل المجوهرات والإكسسوارات والحقائب المختارة بعناية لكِ", cta:"تسوقي الآن", cta2:"شاهدي الكولكشن" },
+    hero:   { badge:"كولكشن ربيع ٢٠٢٥", t1:"أناقتكِ", t2:"عالمنا", sub:"اكتشفي أجمل المجوهرات والإكسسوارات والحقائب المختارة بعناية لكِ", cta:"تسوقي الآن", cta2:"شاهدي الكولكشن" },
     cats:   { title:"تسوقي بالتصنيف", jewelry:"مجوهرات", accessories:"إكسسوارات", handbags:"حقائب" },
     feat:   { title:"المنتجات المميزة", sub:"اختيارات مميزة بعناية لكِ", all:"عرض الكل" },
     rev:    { title:"آراء عملائنا", sub:"يثقون بنا من كل أرجاء مصر" },
@@ -67,23 +67,23 @@ export const TR = {
     prod:   { addCart:"أضيفي للسلة", addWish:"أضيفي للمفضلة", share:"شاركي", related:"منتجات مشابهة", inStock:"متوفر", qty:"الكمية" },
     shop:   { title:"المتجر", all:"الكل", jewelry:"مجوهرات", accessories:"إكسسوارات", handbags:"حقائب", newest:"الأحدث", best:"الأكثر مبيعاً", pAsc:"السعر: الأقل", pDesc:"السعر: الأعلى", noRes:"لا توجد نتائج", qv:"عرض سريع" },
     cart:   { title:"سلة التسوق", empty:"سلتك فارغة", emptySub:"ابدئي التسوق واكتشفي منتجاتنا", checkout:"إتمام الطلب", subtotal:"الإجمالي", ship:"الشحن", free:"مجاني", disc:"كود الخصم", apply:"تطبيق", saved:"توفيرك", cont:"متابعة التسوق", sum:"ملخص الطلب" },
-    co:     { title:"بيانات التوصيل", name:"الاسم الكامل", phone:"رقم الهاتف", gov:"المحافظة", area:"المنطقة / العنوان", pay:"طريقة الدفع", cod:"الدفع عند الاستلام", instapay:"إنستاباي", payBtn:"ادفعي الآن", payMsg:"يرجى إكمال الدفع وتأكيد طلبك", payConf:"تم إكمال الدفع ✓", payUpload:"رفع لقطة الدفع", payUploadDesc:"رفع صورة تأكيد الدفع (JPG أو PNG)", payCheckbox:"لقد أكملت الدفع", place:"تأكيد الطلب", total:"إجمالي الطلب", back:"رجوع" },
-    conf:   { title:"تم تأكيد طلبك! 🎉", sub:"شكراً لكِ على ثقتك في Butterfly Gallery", msg:"سيتم التواصل معكِ خلال ٢٤ ساعة لتأكيد التوصيل", created:"تم إنشاء طلبك بنجاح. يمكنك متابعة حالة الطلب من طلباتي." },
+    co:     { title:"بيانات التوصيل", name:"الاسم الكامل", phone:"رقم الهاتف", gov:"المحافظة", area:"المنطقة / العنوان", pay:"طريقة الدفع", cod:"الدفع عند الاستلام", instapay:"إنستاباي", payBtn:"ادفعي الآن", payMsg:"يرجى إكمال الدفع وتأكيد طلبك", payConf:"تم إكمال الدفع", payUpload:"رفع لقطة الدفع", payUploadDesc:"رفع صورة تأكيد الدفع (JPG أو PNG)", payCheckbox:"لقد أكملت الدفع", place:"تأكيد الطلب", total:"إجمالي الطلب", back:"رجوع" },
+    conf:   { title:"تم تأكيد طلبك!", sub:"شكراً لكِ على ثقتك في Butterfly Gallery", msg:"سيتم التواصل معكِ خلال ٢٤ ساعة لتأكيد التوصيل", created:"تم إنشاء طلبك بنجاح. يمكنك متابعة حالة الطلب من طلباتي." },
     about:  { title:"قصتنا", story:"Butterfly Gallery هي وجهة المرأة المصرية العصرية التي تبحث عن الأناقة والتميز.", vis:"رؤيتنا", visT:"أن نكون الوجهة الأولى للمرأة العربية الباحثة عن الأناقة الراقية بأسعار مناسبة.", mis:"مهمتنا", misT:"تقديم تجربة تسوق فريدة تجمع بين الجودة والأناقة والخدمة الاستثنائية." },
     contact:{ title:"تواصلي معنا", name:"الاسم", email:"البريد الإلكتروني", msg:"رسالتك", send:"إرسال الرسالة", wa:"تواصلي عبر واتساب", addr:"" },
     wish:   { title:"المفضلة", empty:"قائمة المفضلة فارغة", emptySub:"أضيفي المنتجات التي تحبيها هنا", shop:"تسوقي الآن" },
     myOrders:{ title:"طلباتي", loginNeeded:"يرجى تسجيل الدخول لعرض طلباتك", empty:"لا توجد طلبات بعد", emptySub:"ابدئي التسوق وستظهر طلباتك هنا" },
-    auth:   { login:"تسجيل الدخول", signup:"إنشاء حساب", name:"الاسم", email:"البريد الإلكتروني", phone:"رقم الهاتف (اختياري)", password:"كلمة المرور", loginBtn:"دخول", signupBtn:"إنشاء الحساب", haveAcc:"لديكِ حساب؟", noAcc:"ليس لديكِ حساب؟", welcome:"مرحباً", errEmailExists:"هذا البريد مسجل بالفعل", errNoEmail:"البريد غير مسجل", errWrongPass:"كلمة المرور غير صحيحة", errFields:"يرجى ملء جميع الحقول", errAdminEmail:"هذا البريد مخصص لدخول الأدمن.", loginOk:"تم تسجيل الدخول ✓", signupOk:"تم إنشاء الحساب ✓", logoutOk:"تم تسجيل الخروج" },
+    auth:   { login:"تسجيل الدخول", signup:"إنشاء حساب", name:"الاسم", email:"البريد الإلكتروني", phone:"رقم الهاتف (اختياري)", password:"كلمة المرور", loginBtn:"دخول", signupBtn:"إنشاء الحساب", haveAcc:"لديكِ حساب؟", noAcc:"ليس لديكِ حساب؟", welcome:"مرحباً", errEmailExists:"هذا البريد مسجل بالفعل", errNoEmail:"البريد غير مسجل", errWrongPass:"كلمة المرور غير صحيحة", errFields:"يرجى ملء جميع الحقول", errAdminEmail:"هذا البريد مخصص لدخول الأدمن.", loginOk:"تم تسجيل الدخول", signupOk:"تم إنشاء الحساب", logoutOk:"تم تسجيل الخروج" },
     unavailable:"غير متوفر",
-    popup:  { title:"مرحباً بكِ في Butterfly! 🦋", sub:"احصلي على خصم ١٥٪ على أول طلب", code:"BUTTERFLY15", close:"لا شكراً", cta:"تسوقي الآن" },
+    popup:  { title:"مرحباً بكِ في Butterfly!", sub:"احصلي على خصم ١٥٪ على أول طلب", code:"BUTTERFLY15", close:"لا شكراً", cta:"تسوقي الآن" },
     badges: { n:"جديد", b:"الأكثر مبيعاً", s:"تخفيض" },
-    addedCart:"تمت الإضافة للسلة ✓", addedWish:"تمت الإضافة للمفضلة ✓", rmWish:"تمت الإزالة",
-    discOk:"تم تطبيق الكود! خصم ١٥٪ ✓", discFail:"كود غير صحيح", subOk:"شكراً! تم الاشتراك ✓",
+    addedCart:"تمت الإضافة للسلة", addedWish:"تمت الإضافة للمفضلة", rmWish:"تمت الإزالة",
+    discOk:"تم تطبيق الكود! خصم ١٥٪", discFail:"كود غير صحيح", subOk:"شكراً! تم الاشتراك",
   },
   en: {
     brand:"Butterfly Gallery", tagline:"Elegance Without Limits", curr:"EGP",
     nav:    { home:"Home", shop:"Shop", about:"About", contact:"Contact", wishlist:"Wishlist", cart:"Cart", login:"Login", logout:"Logout", signup:"Sign up", myorders:"My Orders", account:"Account", ph:"Search..." },
-    hero:   { badge:"✦ Spring Collection 2025", t1:"Your", t2:"Elegance", sub:"Discover the finest jewelry, accessories & handbags curated just for you", cta:"Shop Now", cta2:"View Collection" },
+    hero:   { badge:"Spring Collection 2025", t1:"Your", t2:"Elegance", sub:"Discover the finest jewelry, accessories & handbags curated just for you", cta:"Shop Now", cta2:"View Collection" },
     cats:   { title:"Shop by Category", jewelry:"Jewelry", accessories:"Accessories", handbags:"Handbags" },
     feat:   { title:"Featured Products", sub:"Carefully curated selections for you", all:"View All" },
     rev:    { title:"Customer Reviews", sub:"Trusted by women across Egypt" },
@@ -91,18 +91,18 @@ export const TR = {
     prod:   { addCart:"Add to Cart", addWish:"Add to Wishlist", share:"Share", related:"Related Products", inStock:"In Stock", qty:"Quantity" },
     shop:   { title:"Shop", all:"All", jewelry:"Jewelry", accessories:"Accessories", handbags:"Handbags", newest:"Newest", best:"Best Selling", pAsc:"Price: Low to High", pDesc:"Price: High to Low", noRes:"No results found", qv:"Quick View" },
     cart:   { title:"Shopping Cart", empty:"Your cart is empty", emptySub:"Start shopping and discover our beautiful products", checkout:"Proceed to Checkout", subtotal:"Subtotal", ship:"Shipping", free:"Free", disc:"Discount Code", apply:"Apply", saved:"Savings", cont:"Continue Shopping", sum:"Order Summary" },
-    co:     { title:"Delivery Details", name:"Full Name", phone:"Phone Number", gov:"Governorate", area:"Area / Detailed Address", pay:"Payment Method", cod:"Cash on Delivery", instapay:"InstaPay", payBtn:"Pay Now", payMsg:"Please complete the payment and confirm your order", payConf:"Payment Completed ✓", payUpload:"Upload Payment Screenshot", payUploadDesc:"Upload your payment confirmation (JPG or PNG)", payCheckbox:"I have completed the payment", place:"Place Order", total:"Order Total", back:"Back" },
-    conf:   { title:"Order Confirmed! 🎉", sub:"Thank you for trusting Butterfly Gallery", msg:"We will contact you within 24 hours to confirm delivery", created:"Your order has been created successfully. You can track its status from My Orders." },
+    co:     { title:"Delivery Details", name:"Full Name", phone:"Phone Number", gov:"Governorate", area:"Area / Detailed Address", pay:"Payment Method", cod:"Cash on Delivery", instapay:"InstaPay", payBtn:"Pay Now", payMsg:"Please complete the payment and confirm your order", payConf:"Payment Completed", payUpload:"Upload Payment Screenshot", payUploadDesc:"Upload your payment confirmation (JPG or PNG)", payCheckbox:"I have completed the payment", place:"Place Order", total:"Order Total", back:"Back" },
+    conf:   { title:"Order Confirmed!", sub:"Thank you for trusting Butterfly Gallery", msg:"We will contact you within 24 hours to confirm delivery", created:"Your order has been created successfully. You can track its status from My Orders." },
     about:  { title:"Our Story", story:"Butterfly Gallery is the destination for the modern Egyptian woman seeking elegance and distinction.", vis:"Our Vision", visT:"To be the premier destination for the Arab woman seeking refined elegance at accessible prices.", mis:"Our Mission", misT:"Delivering a unique shopping experience combining quality, elegance, and exceptional service." },
     contact:{ title:"Contact Us", name:"Name", email:"Email", msg:"Your Message", send:"Send Message", wa:"Chat on WhatsApp", addr:"" },
     wish:   { title:"Wishlist", empty:"Your wishlist is empty", emptySub:"Add products you love here", shop:"Shop Now" },
     myOrders:{ title:"My Orders", loginNeeded:"Please log in to view your orders", empty:"No orders yet", emptySub:"Start shopping and your orders will appear here" },
-    auth:   { login:"Login", signup:"Create Account", name:"Name", email:"Email", phone:"Phone (optional)", password:"Password", loginBtn:"Login", signupBtn:"Create Account", haveAcc:"Have an account?", noAcc:"No account?", welcome:"Welcome", errEmailExists:"This email is already registered", errNoEmail:"Email not registered", errWrongPass:"Incorrect password", errFields:"Please fill all fields", errAdminEmail:"This email is reserved for admin access.", loginOk:"Logged in ✓", signupOk:"Account created ✓", logoutOk:"Logged out" },
+    auth:   { login:"Login", signup:"Create Account", name:"Name", email:"Email", phone:"Phone (optional)", password:"Password", loginBtn:"Login", signupBtn:"Create Account", haveAcc:"Have an account?", noAcc:"No account?", welcome:"Welcome", errEmailExists:"This email is already registered", errNoEmail:"Email not registered", errWrongPass:"Incorrect password", errFields:"Please fill all fields", errAdminEmail:"This email is reserved for admin access.", loginOk:"Logged in", signupOk:"Account created", logoutOk:"Logged out" },
     unavailable:"Unavailable",
-    popup:  { title:"Welcome to Butterfly! 🦋", sub:"Get 15% off your first order", code:"BUTTERFLY15", close:"No thanks", cta:"Shop Now" },
+    popup:  { title:"Welcome to Butterfly!", sub:"Get 15% off your first order", code:"BUTTERFLY15", close:"No thanks", cta:"Shop Now" },
     badges: { n:"New", b:"Best Seller", s:"Sale" },
-    addedCart:"Added to Cart ✓", addedWish:"Added to Wishlist ✓", rmWish:"Removed from Wishlist",
-    discOk:"Code applied! 15% off ✓", discFail:"Invalid discount code", subOk:"Thank you! Subscribed ✓",
+    addedCart:"Added to Cart", addedWish:"Added to Wishlist", rmWish:"Removed from Wishlist",
+    discOk:"Code applied! 15% off", discFail:"Invalid discount code", subOk:"Thank you! Subscribed",
   },
 };
 
@@ -131,8 +131,8 @@ export const buildWaUrl = (number, text = '') => {
 export const buildWhatsAppOrder = (order, lang = 'ar', curr = 'EGP') => {
   const ar = lang === 'ar';
   const L = ar
-    ? { title: '🦋 Butterfly Gallery — طلب جديد', order: 'رقم الطلب', name: 'الاسم', phone: 'الهاتف', gov: 'المحافظة', area: 'العنوان', items: 'المنتجات', sub: 'الإجمالي الفرعي', disc: 'الخصم', ship: 'الشحن', free: 'مجاني', total: 'الإجمالي', pay: 'طريقة الدفع', cod: 'الدفع عند الاستلام', instapay: 'إنستاباي', proof: 'إثبات الدفع' }
-    : { title: '🦋 Butterfly Gallery — New Order', order: 'Order', name: 'Name', phone: 'Phone', gov: 'Governorate', area: 'Address', items: 'Items', sub: 'Subtotal', disc: 'Discount', ship: 'Shipping', free: 'Free', total: 'Total', pay: 'Payment', cod: 'Cash on Delivery', instapay: 'InstaPay', proof: 'Payment proof' };
+    ? { title: 'Butterfly Gallery — طلب جديد', order: 'رقم الطلب', name: 'الاسم', phone: 'الهاتف', gov: 'المحافظة', area: 'العنوان', items: 'المنتجات', sub: 'الإجمالي الفرعي', disc: 'الخصم', ship: 'الشحن', free: 'مجاني', total: 'الإجمالي', pay: 'طريقة الدفع', cod: 'الدفع عند الاستلام', instapay: 'إنستاباي', proof: 'إثبات الدفع' }
+    : { title: 'Butterfly Gallery — New Order', order: 'Order', name: 'Name', phone: 'Phone', gov: 'Governorate', area: 'Address', items: 'Items', sub: 'Subtotal', disc: 'Discount', ship: 'Shipping', free: 'Free', total: 'Total', pay: 'Payment', cod: 'Cash on Delivery', instapay: 'InstaPay', proof: 'Payment proof' };
 
   const c = order.customer || {};
   const money = n => `${Number(n || 0).toLocaleString('en-US')} ${curr}`;
@@ -166,7 +166,6 @@ export const PAYMENT_METHODS = {
     id: 'cod',
     labelAr: 'الدفع عند الاستلام',
     labelEn: 'Cash on Delivery',
-    icon: '💵',
     description: {
       ar: 'ادفعي عند استلام طلبك',
       en: 'Pay when you receive your order',
@@ -176,7 +175,6 @@ export const PAYMENT_METHODS = {
     id: 'instapay',
     labelAr: 'إنستاباي',
     labelEn: 'InstaPay',
-    icon: '💳',
     link: 'https://ipn.eg/S/mmaa212197/instapay/4HqpqQ',
     description: {
       ar: 'ادفعي عبر إنستاباي بسهولة',

@@ -70,8 +70,8 @@ export default function Product({ lang, tr, isRTL, nav, products, selP, setSelP,
             <Stars n={selP.stars} />
             <span style={{ color: G.textL, fontSize: 12 }}>({selP.rc})</span>
             {avail
-              ? <span style={{ color: '#2E7D32', fontSize: 12, marginInlineStart: 10 }}>● {tr.prod.inStock}</span>
-              : <span style={{ color: '#C0392B', fontSize: 12, marginInlineStart: 10 }}>● {tr.unavailable}</span>}
+              ? <span style={{ color: '#2E7D32', fontSize: 12, marginInlineStart: 10, display: 'inline-flex', alignItems: 'center', gap: 6 }}><span style={{ width: 8, height: 8, borderRadius: '50%', background: '#2E7D32', display: 'inline-block' }} />{tr.prod.inStock}</span>
+              : <span style={{ color: '#C0392B', fontSize: 12, marginInlineStart: 10, display: 'inline-flex', alignItems: 'center', gap: 6 }}><span style={{ width: 8, height: 8, borderRadius: '50%', background: '#C0392B', display: 'inline-block' }} />{tr.unavailable}</span>}
           </div>
 
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 20 }}>

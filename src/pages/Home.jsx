@@ -132,8 +132,8 @@ export default function Home({ lang, tr, isRTL, nav, products, addCart, toggleWi
       <div style={{ background: G.text, color: G.goldL, padding: '14px 20px' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', justifyContent: 'center', gap: 'clamp(20px,4vw,60px)', flexWrap: 'wrap' }}>
           {(isRTL
-            ? ['✦ توصيل مجاني فوق ٥٠٠ جنيه', '✦ جودة مضمونة ١٠٠٪', '✦ دفع آمن ومضمون']
-            : ['✦ Free delivery over 500 EGP', '✦ 100% quality guaranteed', '✦ Secure payment']
+            ? ['توصيل مجاني فوق ٥٠٠ جنيه', 'جودة مضمونة ١٠٠٪', 'دفع آمن ومضمون']
+            : ['Free delivery over 500 EGP', '100% quality guaranteed', 'Secure payment']
           ).map(t => <span key={t} style={{ fontSize: 12, letterSpacing: '0.05em', fontWeight: 500 }}>{t}</span>)}
         </div>
       </div>

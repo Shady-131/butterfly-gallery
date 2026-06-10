@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useAppData } from '../../context/AppDataContext';
 import { useToast } from '../../context/ToastContext';
-import { LogOut, LayoutDashboard, Box, ShoppingCart, Settings, BarChart3, ChevronRight, Plus, Edit, Trash2, Package, Clock, CheckCircle, Search, Menu, Info, History } from 'lucide-react';
+import { LogOut, LayoutDashboard, Box, ShoppingCart, Settings, BarChart3, ChevronRight, Plus, Edit, Trash2, Package, Clock, CheckCircle, Search, Menu, Info, History, AlertTriangle } from 'lucide-react';
 import { AdminHeader, DataTable, FormInput, FormTextarea, Badge, Modal, AdminSelect } from '../components/AdminComponents';
 import { ORDER_STATUSES, STATUS_LABELS, SOCIAL_MEDIA, STORE_WHATSAPP, formatPrice, FONT, BRAND } from '../../constants/data';
 import { auditLogService, logAdminAction } from '../../services/database';
@@ -1032,8 +1032,9 @@ function SettingsPage({ settings, onUpdate, onUpdateSocial, success, error, log 
           const isPlaceholder = !wa || wa === STORE_WHATSAPP;
           if (!isPlaceholder) return null;
           return (
-            <p style={{ fontSize: '12px', color: '#B45309', background: '#FEF3C7', border: '1px solid #FDE68A', borderRadius: '6px', padding: '8px 12px', margin: '10px 0 0' }}>
-              ⚠ This is a placeholder number ({STORE_WHATSAPP}). Replace it with the store's real WhatsApp number before going live.
+            <p style={{ fontSize: '12px', color: '#B45309', background: '#FEF3C7', border: '1px solid #FDE68A', borderRadius: '6px', padding: '8px 12px', margin: '10px 0 0', display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+              <AlertTriangle size={15} style={{ flexShrink: 0, marginTop: '1px' }} />
+              <span>This is a placeholder number ({STORE_WHATSAPP}). Replace it with the store's real WhatsApp number before going live.</span>
             </p>
           );
         })()}

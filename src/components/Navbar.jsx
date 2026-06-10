@@ -73,16 +73,24 @@ export default function Navbar({
 
   return (
     <nav style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(253,248,245,0.96)', backdropFilter: 'blur(8px)', borderBottom: `1px solid ${G.bdr}`, fontFamily: FONT }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 20px', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between', direction: isRTL ? 'rtl' : 'ltr' }}>
+      <style>{`
+        /* Keep the bar on one line at every width: the action cluster never
+           shrinks, and the brand wordmark drops on small phones (logo stays). */
+        .nav-actions { flex-shrink: 0; }
+        @media (max-width: 600px) { .nav-brand-text { display: none !important; } }
+        @media (max-width: 380px) { .nav-actions { gap: 8px !important; } }
+        @media (max-width: 340px) { .nav-actions { gap: 6px !important; } }
+      `}</style>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 20px', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, direction: isRTL ? 'rtl' : 'ltr' }}>
 
         {/* Brand */}
-        <button onClick={() => nav('home')} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}>
+        <button onClick={() => nav('home')} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
           <Logo size={26} />
-          <span style={{ fontFamily: BRAND, fontSize: 20, fontWeight: 600, color: G.text, letterSpacing: '0.05em' }}>{tr.brand}</span>
+          <span className="nav-brand-text" style={{ fontFamily: BRAND, fontSize: 20, fontWeight: 600, color: G.text, letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>{tr.brand}</span>
         </button>
 
         {/* Actions */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div className="nav-actions" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <button onClick={() => setSearchOpen(s => !s)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: G.textM, display: 'flex', padding: 6 }}>
             <Search size={18} />
           </button>

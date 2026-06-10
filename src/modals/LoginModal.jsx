@@ -60,7 +60,7 @@ export default function LoginModal({ open, onClose, isRTL, tr, showToast }) {
 
   return (
     <div onClick={close} style={{ position: 'fixed', inset: 0, background: 'rgba(44,24,16,0.5)', zIndex: 10001, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-      <div onClick={e => e.stopPropagation()} style={{ background: G.white, borderRadius: 12, maxWidth: 380, width: '100%', padding: 32, direction: isRTL ? 'rtl' : 'ltr', fontFamily: FONT }}>
+      <div onClick={e => e.stopPropagation()} style={{ background: G.white, borderRadius: 12, maxWidth: 380, width: '100%', maxHeight: '90vh', overflowY: 'auto', padding: 32, direction: isRTL ? 'rtl' : 'ltr', fontFamily: FONT }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <h2 style={{ fontFamily: SERIF, fontSize: 24, color: G.text, margin: 0 }}>
             {isSignup ? a.signup : a.login}

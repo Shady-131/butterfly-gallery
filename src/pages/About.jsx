@@ -1,3 +1,4 @@
+import { Sparkles, Target } from 'lucide-react';
 import Logo from '../components/ui/Logo';
 import Btn  from '../components/ui/Btn';
 import { G, FONT, SERIF } from '../constants/data';
@@ -21,11 +22,11 @@ export default function About({ lang, tr, isRTL, nav }) {
         `}</style>
         <div className="about-grid">
           {[
-            { title: tr.about.vis, text: tr.about.visT, icon: '🌟' },
-            { title: tr.about.mis, text: tr.about.misT, icon: '🦋' },
-          ].map(({ title, text, icon }) => (
+            { title: tr.about.vis, text: tr.about.visT, Icon: Sparkles },
+            { title: tr.about.mis, text: tr.about.misT, Icon: Target },
+          ].map(({ title, text, Icon }) => (
             <div key={title} style={{ background: G.pinkL, borderRadius: 10, padding: 28, border: `1px solid ${G.bdr}` }}>
-              <div style={{ fontSize: 28, marginBottom: 12 }}>{icon}</div>
+              <div style={{ marginBottom: 12 }}><Icon size={28} color={G.gold} strokeWidth={1.75} /></div>
               <h3 style={{ fontFamily: SERIF, fontSize: 22, color: G.text, marginBottom: 10 }}>{title}</h3>
               <p style={{ color: G.textM, fontSize: 14, lineHeight: 1.8, margin: 0 }}>{text}</p>
             </div>

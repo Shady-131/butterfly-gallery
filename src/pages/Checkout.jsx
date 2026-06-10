@@ -1,8 +1,12 @@
 import { useState } from 'react';
+import { Banknote, Smartphone, CreditCard, Check } from 'lucide-react';
 import Btn from '../components/ui/Btn';
 import PublicSelect from '../components/ui/PublicSelect';
 import PriceText from '../components/ui/PriceText';
 import { G, FONT, SERIF, GOVS, PAYMENT_METHODS } from '../constants/data';
+
+// Clean lucide icons per payment method (no emojis in the UI).
+const PAYMENT_ICONS = { cod: Banknote, instapay: Smartphone };
 
 // Props: lang, tr, isRTL, cart, coForm, setCoForm, total, sub, discApplied, disc, nav, showToast, setCart, addOrder, setLastOrder, customer
 export default function Checkout({ lang, tr, isRTL, cart, coForm, setCoForm, total, sub, discApplied, disc, nav, showToast, setCart, addOrder, setLastOrder, customer }) {
@@ -89,13 +93,13 @@ export default function Checkout({ lang, tr, isRTL, cart, coForm, setCoForm, tot
     {
       id: 'cod',
       label: lang === 'ar' ? PAYMENT_METHODS.cod.labelAr : PAYMENT_METHODS.cod.labelEn,
-      icon: PAYMENT_METHODS.cod.icon,
+      Icon: PAYMENT_ICONS.cod,
       description: lang === 'ar' ? PAYMENT_METHODS.cod.description.ar : PAYMENT_METHODS.cod.description.en,
     },
     {
       id: 'instapay',
       label: lang === 'ar' ? PAYMENT_METHODS.instapay.labelAr : PAYMENT_METHODS.instapay.labelEn,
-      icon: PAYMENT_METHODS.instapay.icon,
+      Icon: PAYMENT_ICONS.instapay,
       description: lang === 'ar' ? PAYMENT_METHODS.instapay.description.ar : PAYMENT_METHODS.instapay.description.en,
     },
   ];
@@ -221,7 +225,7 @@ export default function Checkout({ lang, tr, isRTL, cart, coForm, setCoForm, tot
                     </div>
 
                     {/* Icon */}
-                    <span style={{ fontSize: 20 }}>{pm.icon}</span>
+                    <pm.Icon size={22} strokeWidth={1.75} color={coForm.pay === pm.id ? G.gold : G.textM} style={{ flexShrink: 0 }} />
 
                     {/* Text */}
                     <div>
@@ -252,6 +256,10 @@ export default function Checkout({ lang, tr, isRTL, cart, coForm, setCoForm, tot
                           cursor: 'pointer',
                           transition: 'all .2s',
                           boxShadow: `0 4px 12px ${G.gold}40`,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: 8,
                         }}
                         onMouseEnter={e => {
                           e.currentTarget.style.background = '#B89544';
@@ -264,7 +272,7 @@ export default function Checkout({ lang, tr, isRTL, cart, coForm, setCoForm, tot
                           e.currentTarget.style.boxShadow = `0 4px 12px ${G.gold}40`;
                         }}
                       >
-                        {tr.co.payBtn} 💳
+                        {tr.co.payBtn}<CreditCard size={16} />
                       </button>
 
                       {/* Payment Status Message */}
@@ -328,7 +336,7 @@ export default function Checkout({ lang, tr, isRTL, cart, coForm, setCoForm, tot
                                   return;
                                 }
                                 setPaymentScreenshot(file);
-                                showToast(lang === 'ar' ? 'تم رفع الصورة بنجاح ✓' : 'Screenshot uploaded ✓');
+                                showToast(lang === 'ar' ? 'تم رفع الصورة بنجاح' : 'Screenshot uploaded');
                               }
                             }}
                             style={{
@@ -345,7 +353,7 @@ export default function Checkout({ lang, tr, isRTL, cart, coForm, setCoForm, tot
                           />
                           {paymentScreenshot && (
                             <div style={{ marginTop: 10, padding: '8px 12px', background: '#C8E6C9', borderRadius: 6, fontSize: 12, color: '#2E7D32', display: 'flex', alignItems: 'center', gap: 8 }}>
-                              ✓ {paymentScreenshot.name}
+                              <Check size={14} style={{ flexShrink: 0 }} /> {paymentScreenshot.name}
                             </div>
                           )}
                         </div>

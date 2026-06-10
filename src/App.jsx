@@ -90,7 +90,7 @@ function LoadingScreen({ lang }) {
 function Toast({ msg }) {
   if (!msg) return null;
   return (
-    <div style={{ position: 'fixed', bottom: 88, left: '50%', transform: 'translateX(-50%)', background: G.text, color: G.goldL, padding: '12px 24px', borderRadius: 30, fontSize: 13, fontWeight: 500, zIndex: 9999, animation: 'slideUp 0.3s ease', whiteSpace: 'nowrap', letterSpacing: '0.03em', boxShadow: '0 4px 20px rgba(44,24,16,0.3)', fontFamily: FONT }}>
+    <div style={{ position: 'fixed', bottom: 88, left: '50%', transform: 'translateX(-50%)', background: G.text, color: G.goldL, padding: '12px 24px', borderRadius: 30, fontSize: 13, fontWeight: 500, zIndex: 9999, animation: 'slideUp 0.3s ease', maxWidth: 'calc(100vw - 32px)', textAlign: 'center', letterSpacing: '0.03em', boxShadow: '0 4px 20px rgba(44,24,16,0.3)', fontFamily: FONT }}>
       {msg}
     </div>
   );

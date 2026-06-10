@@ -38,11 +38,11 @@ export default function Shop({ lang, tr, isRTL, products, catF, setCatF, sortF, 
             </button>
           ))}
         </div>
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-          <div style={{ position: 'relative' }}>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+          <div style={{ position: 'relative', flex: '1 1 150px', minWidth: 0, maxWidth: 220 }}>
             <Search size={14} style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', insetInlineStart: 10, color: G.textL }} />
             <input value={searchQ} onChange={e => setSearchQ(e.target.value)} placeholder={tr.nav.ph}
-              style={{ padding: `9px 12px 9px ${isRTL ? '12px' : '32px'}`, border: `1px solid ${G.bdr}`, borderRadius: 6, fontSize: 13, fontFamily: FONT, outline: 'none', background: G.bg, color: G.text, width: 180 }} />
+              style={{ padding: `9px 12px 9px ${isRTL ? '12px' : '32px'}`, border: `1px solid ${G.bdr}`, borderRadius: 6, fontSize: 13, fontFamily: FONT, outline: 'none', background: G.bg, color: G.text, width: '100%', boxSizing: 'border-box' }} />
           </div>
           <PublicSelect
             value={sortF}

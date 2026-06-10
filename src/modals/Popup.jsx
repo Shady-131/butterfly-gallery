@@ -9,7 +9,7 @@ export default function Popup({ show, onClose, tr, isRTL, onClaim }) {
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(44,24,16,0.5)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-      <div style={{ background: G.white, borderRadius: 16, maxWidth: 380, width: '100%', padding: 36, textAlign: 'center', direction: isRTL ? 'rtl' : 'ltr', position: 'relative', border: `2px solid ${G.goldL}`, fontFamily: FONT }}>
+      <div style={{ background: G.white, borderRadius: 16, maxWidth: 380, width: '100%', maxHeight: '90vh', overflowY: 'auto', padding: 36, textAlign: 'center', direction: isRTL ? 'rtl' : 'ltr', position: 'relative', border: `2px solid ${G.goldL}`, fontFamily: FONT }}>
         <button onClick={onClose} style={{ position: 'absolute', top: 12, right: 12, background: 'none', border: 'none', cursor: 'pointer', color: G.textL }}>
           <X size={16} />
         </button>

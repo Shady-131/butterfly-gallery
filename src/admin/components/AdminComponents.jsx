@@ -1,4 +1,5 @@
 import React from 'react';
+import { X } from 'lucide-react';
 import CustomSelect from '../../components/ui/CustomSelect';
 
 // Admin-themed dropdown — a thin wrapper around the shared CustomSelect base.
@@ -387,11 +388,11 @@ export function Modal({ isOpen, title, onClose, children, size = 'md' }) {
           </h2>
           <button
             onClick={onClose}
+            aria-label="Close"
             style={{
               background: 'none',
               border: 'none',
               cursor: 'pointer',
-              fontSize: '24px',
               color: '#9B8878',
               padding: 0,
               width: 24,
@@ -401,7 +402,7 @@ export function Modal({ isOpen, title, onClose, children, size = 'md' }) {
               justifyContent: 'center',
             }}
           >
-            ×
+            <X size={20} />
           </button>
         </div>
         <div style={{ padding: '24px' }}>

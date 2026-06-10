@@ -13,7 +13,7 @@ const DEFAULT_DATA = {
     brandName: 'Butterfly Gallery',
     brandTagline: 'Elegance Without Limits',
     heroTitle: 'Your Elegance',
-    heroBadge: '✦ Spring Collection 2025',
+    heroBadge: 'Spring Collection 2025',
     colors: {
       primary: '#F2C4CE',
       secondary: '#C9A84C',

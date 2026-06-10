@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Lock, Mail } from 'lucide-react';
+import Logo from '../../components/ui/Logo';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -64,9 +65,8 @@ export default function AdminLogin() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '28px',
           }}>
-            🦋
+            <Logo size={34} />
           </div>
           <h1 style={{
             fontSize: '24px',

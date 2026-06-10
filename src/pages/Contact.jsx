@@ -10,7 +10,7 @@ export default function Contact({ lang, tr, isRTL, showToast, social = SOCIAL_ME
 
   const handleSubmit = () => {
     if (form.name && form.email && form.msg) {
-      showToast(isRTL ? 'تم إرسال رسالتك ✓' : 'Message sent ✓');
+      showToast(isRTL ? 'تم إرسال رسالتك' : 'Message sent');
       setForm({ name: '', email: '', msg: '' });
     }
   };
