@@ -17,7 +17,7 @@ export default function Popup({ show, onClose, tr, isRTL, onClaim }) {
         <h2 style={{ fontFamily: SERIF, fontSize: 26, color: G.text, margin: '14px 0 8px' }}>{tr.popup.title}</h2>
         <p style={{ color: G.textM, fontSize: 14, marginBottom: 20 }}>{tr.popup.sub}</p>
         <div style={{ background: G.goldL, border: `1.5px dashed ${G.gold}`, borderRadius: 8, padding: '12px 20px', marginBottom: 20 }}>
-          <span style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 600, color: G.gold, letterSpacing: '0.1em' }}>{tr.popup.code}</span>
+          <span style={{ fontFamily: FONT, fontSize: 22, fontWeight: 700, color: G.gold, letterSpacing: '0.06em', fontVariantNumeric: 'tabular-nums' }}>{tr.popup.code}</span>
         </div>
         <Btn onClick={onClaim} style={{ width: '100%', boxSizing: 'border-box', textAlign: 'center' }}>{tr.popup.cta}</Btn>
         <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: G.textL, fontSize: 12, marginTop: 12, fontFamily: FONT, display: 'block', width: '100%' }}>

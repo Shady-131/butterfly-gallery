@@ -1,4 +1,12 @@
 import React from 'react';
+import CustomSelect from '../../components/ui/CustomSelect';
+
+// Admin-themed dropdown — a thin wrapper around the shared CustomSelect base.
+// CustomSelect's default theme already matches the admin palette, so this just
+// keeps a stable `AdminSelect` name/API for the dashboard.
+export function AdminSelect(props) {
+  return <CustomSelect {...props} />;
+}
 
 export function AdminHeader({ title, subtitle, actions = [] }) {
   return (
@@ -155,28 +163,36 @@ export function DataTable({ columns, data, actions = [] }) {
                     textAlign: 'center',
                   }}>
                     <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                      {actions.map((action, aIdx) => (
-                        <button
-                          key={aIdx}
-                          onClick={() => action.handler(row)}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            cursor: 'pointer',
-                            color: action.color || '#C9A84C',
-                            padding: '4px 8px',
-                            borderRadius: '4px',
-                            transition: 'background 0.2s',
-                            fontSize: '12px',
-                            fontWeight: 500,
-                          }}
-                          onMouseEnter={(e) => e.target.style.background = 'rgba(201,168,76,0.1)'}
-                          onMouseLeave={(e) => e.target.style.background = 'transparent'}
-                          title={action.label}
-                        >
-                          {action.icon ? action.icon : action.label}
-                        </button>
-                      ))}
+                      {actions.map((action, aIdx) => {
+                        const c = action.color || '#C9A84C';
+                        return (
+                          <button
+                            key={aIdx}
+                            onClick={() => action.handler(row)}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              background: 'white',
+                              border: `1px solid ${c}`,
+                              cursor: 'pointer',
+                              color: c,
+                              padding: '6px 12px',
+                              borderRadius: '6px',
+                              transition: 'all 0.15s',
+                              fontSize: '12px',
+                              fontWeight: 600,
+                              fontFamily: 'inherit',
+                              whiteSpace: 'nowrap',
+                            }}
+                            onMouseEnter={(e) => { e.currentTarget.style.background = c; e.currentTarget.style.color = 'white'; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.background = 'white'; e.currentTarget.style.color = c; }}
+                            title={action.label}
+                          >
+                            {action.icon}{action.label}
+                          </button>
+                        );
+                      })}
                     </div>
                   </td>
                 )}

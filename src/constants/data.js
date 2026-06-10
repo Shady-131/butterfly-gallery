@@ -9,8 +9,21 @@ export const G = {
 };
 
 // ─── Typography ───────────────────────────────────────────────────────────────
-export const FONT   = "'Jost', 'Segoe UI', sans-serif";
-export const SERIF  = "'Cormorant Garamond', Georgia, serif";
+// Unified system: Tajawal is the single UI font everywhere (storefront + admin,
+// English + Arabic, headings + body + prices + codes). It's clean, modern and
+// Arabic-friendly, so numbers/coupon codes/order IDs/Arabic all render
+// consistently. `SERIF` is kept as an alias of the same stack so the many
+// `fontFamily: SERIF` heading usages need no per-file edits.
+export const FONT   = "'Tajawal', 'Jost', 'Segoe UI', sans-serif";
+export const SERIF  = "'Tajawal', 'Jost', 'Segoe UI', sans-serif";
+// Decorative serif reserved ONLY for the "Butterfly Gallery" brand wordmark/logo.
+export const BRAND  = "'Cormorant Garamond', Georgia, serif";
+
+// ─── Currency / price formatting (single source of truth) ───────────────────────
+export const CURRENCY = { ar: 'جنيه', en: 'EGP' };
+// Always Western digits + thousands separators, e.g. "1,850 جنيه" / "1,850 EGP".
+export const formatPrice = (amount, lang = 'ar') =>
+  `${Number(amount || 0).toLocaleString('en-US')} ${lang === 'ar' ? CURRENCY.ar : CURRENCY.en}`;
 
 // ─── Products ─────────────────────────────────────────────────────────────────
 export const PRODUCTS = [
@@ -44,8 +57,8 @@ export const GOVS = {
 // ─── Translations ─────────────────────────────────────────────────────────────
 export const TR = {
   ar: {
-    brand:"Butterfly Gallery", tagline:"أناقة لا حدود لها", curr:"ج.م",
-    nav:    { home:"الرئيسية", shop:"المتجر", about:"من نحن", contact:"تواصلي", wishlist:"المفضلة", cart:"السلة", login:"دخول", ph:"ابحثي..." },
+    brand:"Butterfly Gallery", tagline:"أناقة لا حدود لها", curr:"جنيه",
+    nav:    { home:"الرئيسية", shop:"المتجر", about:"من نحن", contact:"تواصلي", wishlist:"المفضلة", cart:"السلة", login:"دخول", logout:"تسجيل الخروج", signup:"إنشاء حساب", myorders:"طلباتي", account:"حسابي", ph:"ابحثي..." },
     hero:   { badge:"✦ كولكشن ربيع ٢٠٢٥", t1:"أناقتكِ", t2:"عالمنا", sub:"اكتشفي أجمل المجوهرات والإكسسوارات والحقائب المختارة بعناية لكِ", cta:"تسوقي الآن", cta2:"شاهدي الكولكشن" },
     cats:   { title:"تسوقي بالتصنيف", jewelry:"مجوهرات", accessories:"إكسسوارات", handbags:"حقائب" },
     feat:   { title:"المنتجات المميزة", sub:"اختيارات مميزة بعناية لكِ", all:"عرض الكل" },
@@ -55,10 +68,13 @@ export const TR = {
     shop:   { title:"المتجر", all:"الكل", jewelry:"مجوهرات", accessories:"إكسسوارات", handbags:"حقائب", newest:"الأحدث", best:"الأكثر مبيعاً", pAsc:"السعر: الأقل", pDesc:"السعر: الأعلى", noRes:"لا توجد نتائج", qv:"عرض سريع" },
     cart:   { title:"سلة التسوق", empty:"سلتك فارغة", emptySub:"ابدئي التسوق واكتشفي منتجاتنا", checkout:"إتمام الطلب", subtotal:"الإجمالي", ship:"الشحن", free:"مجاني", disc:"كود الخصم", apply:"تطبيق", saved:"توفيرك", cont:"متابعة التسوق", sum:"ملخص الطلب" },
     co:     { title:"بيانات التوصيل", name:"الاسم الكامل", phone:"رقم الهاتف", gov:"المحافظة", area:"المنطقة / العنوان", pay:"طريقة الدفع", cod:"الدفع عند الاستلام", instapay:"إنستاباي", payBtn:"ادفعي الآن", payMsg:"يرجى إكمال الدفع وتأكيد طلبك", payConf:"تم إكمال الدفع ✓", payUpload:"رفع لقطة الدفع", payUploadDesc:"رفع صورة تأكيد الدفع (JPG أو PNG)", payCheckbox:"لقد أكملت الدفع", place:"تأكيد الطلب", total:"إجمالي الطلب", back:"رجوع" },
-    conf:   { title:"تم تأكيد طلبك! 🎉", sub:"شكراً لكِ على ثقتك في Butterfly Gallery", msg:"سيتم التواصل معكِ خلال ٢٤ ساعة لتأكيد التوصيل" },
+    conf:   { title:"تم تأكيد طلبك! 🎉", sub:"شكراً لكِ على ثقتك في Butterfly Gallery", msg:"سيتم التواصل معكِ خلال ٢٤ ساعة لتأكيد التوصيل", created:"تم إنشاء طلبك بنجاح. يمكنك متابعة حالة الطلب من طلباتي." },
     about:  { title:"قصتنا", story:"Butterfly Gallery هي وجهة المرأة المصرية العصرية التي تبحث عن الأناقة والتميز.", vis:"رؤيتنا", visT:"أن نكون الوجهة الأولى للمرأة العربية الباحثة عن الأناقة الراقية بأسعار مناسبة.", mis:"مهمتنا", misT:"تقديم تجربة تسوق فريدة تجمع بين الجودة والأناقة والخدمة الاستثنائية." },
     contact:{ title:"تواصلي معنا", name:"الاسم", email:"البريد الإلكتروني", msg:"رسالتك", send:"إرسال الرسالة", wa:"تواصلي عبر واتساب", addr:"" },
     wish:   { title:"المفضلة", empty:"قائمة المفضلة فارغة", emptySub:"أضيفي المنتجات التي تحبيها هنا", shop:"تسوقي الآن" },
+    myOrders:{ title:"طلباتي", loginNeeded:"يرجى تسجيل الدخول لعرض طلباتك", empty:"لا توجد طلبات بعد", emptySub:"ابدئي التسوق وستظهر طلباتك هنا" },
+    auth:   { login:"تسجيل الدخول", signup:"إنشاء حساب", name:"الاسم", email:"البريد الإلكتروني", phone:"رقم الهاتف (اختياري)", password:"كلمة المرور", loginBtn:"دخول", signupBtn:"إنشاء الحساب", haveAcc:"لديكِ حساب؟", noAcc:"ليس لديكِ حساب؟", welcome:"مرحباً", errEmailExists:"هذا البريد مسجل بالفعل", errNoEmail:"البريد غير مسجل", errWrongPass:"كلمة المرور غير صحيحة", errFields:"يرجى ملء جميع الحقول", loginOk:"تم تسجيل الدخول ✓", signupOk:"تم إنشاء الحساب ✓", logoutOk:"تم تسجيل الخروج" },
+    unavailable:"غير متوفر",
     popup:  { title:"مرحباً بكِ في Butterfly! 🦋", sub:"احصلي على خصم ١٥٪ على أول طلب", code:"BUTTERFLY15", close:"لا شكراً", cta:"تسوقي الآن" },
     badges: { n:"جديد", b:"الأكثر مبيعاً", s:"تخفيض" },
     addedCart:"تمت الإضافة للسلة ✓", addedWish:"تمت الإضافة للمفضلة ✓", rmWish:"تمت الإزالة",
@@ -66,7 +82,7 @@ export const TR = {
   },
   en: {
     brand:"Butterfly Gallery", tagline:"Elegance Without Limits", curr:"EGP",
-    nav:    { home:"Home", shop:"Shop", about:"About", contact:"Contact", wishlist:"Wishlist", cart:"Cart", login:"Login", ph:"Search..." },
+    nav:    { home:"Home", shop:"Shop", about:"About", contact:"Contact", wishlist:"Wishlist", cart:"Cart", login:"Login", logout:"Logout", signup:"Sign up", myorders:"My Orders", account:"Account", ph:"Search..." },
     hero:   { badge:"✦ Spring Collection 2025", t1:"Your", t2:"Elegance", sub:"Discover the finest jewelry, accessories & handbags curated just for you", cta:"Shop Now", cta2:"View Collection" },
     cats:   { title:"Shop by Category", jewelry:"Jewelry", accessories:"Accessories", handbags:"Handbags" },
     feat:   { title:"Featured Products", sub:"Carefully curated selections for you", all:"View All" },
@@ -76,10 +92,13 @@ export const TR = {
     shop:   { title:"Shop", all:"All", jewelry:"Jewelry", accessories:"Accessories", handbags:"Handbags", newest:"Newest", best:"Best Selling", pAsc:"Price: Low to High", pDesc:"Price: High to Low", noRes:"No results found", qv:"Quick View" },
     cart:   { title:"Shopping Cart", empty:"Your cart is empty", emptySub:"Start shopping and discover our beautiful products", checkout:"Proceed to Checkout", subtotal:"Subtotal", ship:"Shipping", free:"Free", disc:"Discount Code", apply:"Apply", saved:"Savings", cont:"Continue Shopping", sum:"Order Summary" },
     co:     { title:"Delivery Details", name:"Full Name", phone:"Phone Number", gov:"Governorate", area:"Area / Detailed Address", pay:"Payment Method", cod:"Cash on Delivery", instapay:"InstaPay", payBtn:"Pay Now", payMsg:"Please complete the payment and confirm your order", payConf:"Payment Completed ✓", payUpload:"Upload Payment Screenshot", payUploadDesc:"Upload your payment confirmation (JPG or PNG)", payCheckbox:"I have completed the payment", place:"Place Order", total:"Order Total", back:"Back" },
-    conf:   { title:"Order Confirmed! 🎉", sub:"Thank you for trusting Butterfly Gallery", msg:"We will contact you within 24 hours to confirm delivery" },
+    conf:   { title:"Order Confirmed! 🎉", sub:"Thank you for trusting Butterfly Gallery", msg:"We will contact you within 24 hours to confirm delivery", created:"Your order has been created successfully. You can track its status from My Orders." },
     about:  { title:"Our Story", story:"Butterfly Gallery is the destination for the modern Egyptian woman seeking elegance and distinction.", vis:"Our Vision", visT:"To be the premier destination for the Arab woman seeking refined elegance at accessible prices.", mis:"Our Mission", misT:"Delivering a unique shopping experience combining quality, elegance, and exceptional service." },
     contact:{ title:"Contact Us", name:"Name", email:"Email", msg:"Your Message", send:"Send Message", wa:"Chat on WhatsApp", addr:"" },
     wish:   { title:"Wishlist", empty:"Your wishlist is empty", emptySub:"Add products you love here", shop:"Shop Now" },
+    myOrders:{ title:"My Orders", loginNeeded:"Please log in to view your orders", empty:"No orders yet", emptySub:"Start shopping and your orders will appear here" },
+    auth:   { login:"Login", signup:"Create Account", name:"Name", email:"Email", phone:"Phone (optional)", password:"Password", loginBtn:"Login", signupBtn:"Create Account", haveAcc:"Have an account?", noAcc:"No account?", welcome:"Welcome", errEmailExists:"This email is already registered", errNoEmail:"Email not registered", errWrongPass:"Incorrect password", errFields:"Please fill all fields", loginOk:"Logged in ✓", signupOk:"Account created ✓", logoutOk:"Logged out" },
+    unavailable:"Unavailable",
     popup:  { title:"Welcome to Butterfly! 🦋", sub:"Get 15% off your first order", code:"BUTTERFLY15", close:"No thanks", cta:"Shop Now" },
     badges: { n:"New", b:"Best Seller", s:"Sale" },
     addedCart:"Added to Cart ✓", addedWish:"Added to Wishlist ✓", rmWish:"Removed from Wishlist",
@@ -87,12 +106,58 @@ export const TR = {
   },
 };
 
+// ─── Store WhatsApp (single fallback — CHANGE THIS to the store's real number) ──
+// International format, digits only (e.g. Egypt: 20 + number without the leading 0).
+// The admin Settings → Social → WhatsApp value overrides this at runtime when set.
+export const STORE_WHATSAPP = '201001234567';
+
 // ─── Social Media Links ────────────────────────────────────────────────────────
 export const SOCIAL_MEDIA = {
   instagram: 'https://www.instagram.com/butterfly.gallery510?igsh=cXo5bTgzcjk0OGZv',
   facebook: 'https://www.facebook.com/share/g/1Yi5cNkjpN/?mibextid=wwXIfr',
   tiktok: 'https://www.tiktok.com/@butterflyg510?_r=1&_t=ZS-95eOx6HpejJ',
-  whatsapp: 'https://wa.me/201234567890',
+  whatsapp: STORE_WHATSAPP,
+};
+
+// ─── WhatsApp helpers ───────────────────────────────────────────────────────────
+// Normalise any stored WhatsApp value (e.g. "+20 100 123 4567") to digits and
+// build a wa.me deep link, falling back to the central STORE_WHATSAPP number.
+export const buildWaUrl = (number, text = '') => {
+  const digits = String(number || '').replace(/[^0-9]/g, '') || STORE_WHATSAPP;
+  return `https://wa.me/${digits}${text ? `?text=${encodeURIComponent(text)}` : ''}`;
+};
+
+// Build a clear, owner-readable order message for WhatsApp delivery.
+export const buildWhatsAppOrder = (order, lang = 'ar', curr = 'EGP') => {
+  const ar = lang === 'ar';
+  const L = ar
+    ? { title: '🦋 Butterfly Gallery — طلب جديد', order: 'رقم الطلب', name: 'الاسم', phone: 'الهاتف', gov: 'المحافظة', area: 'العنوان', items: 'المنتجات', sub: 'الإجمالي الفرعي', disc: 'الخصم', ship: 'الشحن', free: 'مجاني', total: 'الإجمالي', pay: 'طريقة الدفع', cod: 'الدفع عند الاستلام', instapay: 'إنستاباي', proof: 'إثبات الدفع' }
+    : { title: '🦋 Butterfly Gallery — New Order', order: 'Order', name: 'Name', phone: 'Phone', gov: 'Governorate', area: 'Address', items: 'Items', sub: 'Subtotal', disc: 'Discount', ship: 'Shipping', free: 'Free', total: 'Total', pay: 'Payment', cod: 'Cash on Delivery', instapay: 'InstaPay', proof: 'Payment proof' };
+
+  const c = order.customer || {};
+  const money = n => `${Number(n || 0).toLocaleString('en-US')} ${curr}`;
+  const lines = [L.title, ''];
+
+  lines.push(`${L.order}: ${order.id || '-'}`);
+  lines.push(`${L.name}: ${c.name || '-'}`);
+  lines.push(`${L.phone}: ${c.phone || '-'}`);
+  if (c.governorate) lines.push(`${L.gov}: ${c.governorate}`);
+  if (c.area) lines.push(`${L.area}: ${c.area}`);
+
+  lines.push('', `${L.items}:`);
+  (order.items || []).forEach(i => {
+    const nm = ar ? (i.ar || i.en) : (i.en || i.ar);
+    lines.push(`• ${nm} ×${i.qty} = ${money(i.price * i.qty)}`);
+  });
+
+  lines.push('', `${L.sub}: ${money(order.subtotal)}`);
+  if (order.discount) lines.push(`${L.disc}: -${money(order.discount)}`);
+  lines.push(`${L.ship}: ${order.shipping ? money(order.shipping) : L.free}`);
+  lines.push(`${L.total}: ${money(order.total)}`);
+  lines.push(`${L.pay}: ${order.paymentMethod === 'instapay' ? L.instapay : L.cod}`);
+  if (order.paymentScreenshot) lines.push(`${L.proof}: ${order.paymentScreenshot}`);
+
+  return lines.join('\n');
 };
 
 // ─── Payment Methods Configuration ──────────────────────────────────────────────
@@ -119,3 +184,27 @@ export const PAYMENT_METHODS = {
     },
   },
 };
+
+// ─── Order Statuses (single source for storefront + admin) ──────────────────────
+export const ORDER_STATUSES = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
+
+export const STATUS_LABELS = {
+  pending:    { ar: 'قيد المراجعة', en: 'Pending',    color: '#F59E0B' },
+  confirmed:  { ar: 'تم التأكيد',   en: 'Confirmed',  color: '#3B82F6' },
+  processing: { ar: 'جاري التجهيز', en: 'Processing', color: '#8B5CF6' },
+  shipped:    { ar: 'تم الشحن',     en: 'Shipped',    color: '#0EA5E9' },
+  delivered:  { ar: 'تم التسليم',   en: 'Delivered',  color: '#10B981' },
+  cancelled:  { ar: 'ملغي',         en: 'Cancelled',  color: '#EF4444' },
+};
+
+export const statusLabel = (status, lang = 'ar') =>
+  (STATUS_LABELS[status] ? STATUS_LABELS[status][lang === 'ar' ? 'ar' : 'en'] : status);
+
+export const statusColor = (status) =>
+  (STATUS_LABELS[status] ? STATUS_LABELS[status].color : '#9B8878');
+
+// ─── Product availability helper ────────────────────────────────────────────────
+// A product is orderable when it's not flagged unavailable and (if stock is
+// tracked) has stock left. `stock == null` means "stock not tracked".
+export const isAvailable = (p) =>
+  !!p && p.available !== false && (p.stock === null || p.stock === undefined || Number(p.stock) > 0);

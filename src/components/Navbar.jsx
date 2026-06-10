@@ -1,44 +1,84 @@
-import { Search, Globe, Heart, ShoppingBag, Menu, X, User } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { Search, Globe, Heart, ShoppingBag, Menu, X, User, Package, LogOut } from 'lucide-react';
 import Logo from './ui/Logo';
-import { G, FONT } from '../constants/data';
+import { G, FONT, BRAND } from '../constants/data';
+import { useCustomerAuth } from '../context/CustomerAuthContext';
 
 // Props: lang, setLang, page, nav, cartCount, wishCount,
 //        searchQ, setSearchQ, searchOpen, setSearchOpen,
-//        menu, setMenu, setLoginOpen, tr, isRTL
+//        menu, setMenu, setLoginOpen, tr, isRTL, showToast
 export default function Navbar({
   lang, setLang, page, nav, cartCount, wishCount,
   searchQ, setSearchQ, searchOpen, setSearchOpen,
-  menu, setMenu, setLoginOpen, tr, isRTL,
+  menu, setMenu, setLoginOpen, tr, isRTL, showToast,
 }) {
+  const { customer, isLoggedIn, logout } = useCustomerAuth();
+
+  const handleLogout = () => {
+    logout();
+    setMenu(false);
+    if (showToast) showToast(tr.auth.logoutOk);
+  };
+
+  const openLogin = () => { setMenu(false); setLoginOpen(true); };
+
+  // Menu links — My Orders only appears for logged-in customers.
+  const links = ['home', 'shop', 'about', 'contact', 'wishlist', ...(isLoggedIn ? ['myorders'] : [])];
+
+  // The drawer + overlay render through a portal on document.body so they sit
+  // above the sticky navbar, sticky cart/checkout summaries and the floating
+  // WhatsApp button (no stacking-context / z-index bleed-through).
+  const drawer = menu ? createPortal(
+    <>
+      <div onClick={() => setMenu(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 100000 }} />
+      <div style={{ position: 'fixed', top: 0, bottom: 0, [isRTL ? 'left' : 'right']: 0, width: 'min(82vw, 300px)', background: '#FFFBF8', zIndex: 100001, boxShadow: '0 0 30px rgba(44,24,16,0.25)', padding: 24, direction: isRTL ? 'rtl' : 'ltr', overflowY: 'auto', fontFamily: FONT }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+          <Logo size={22} />
+          <button onClick={() => setMenu(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: G.textM }}><X size={20} /></button>
+        </div>
+
+        {isLoggedIn && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: G.pinkL, border: `1px solid ${G.bdr}`, borderRadius: 8, padding: '10px 12px', marginBottom: 16 }}>
+            <div style={{ width: 34, height: 34, borderRadius: '50%', background: G.gold, color: G.white, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>
+              {customer.name?.[0]?.toUpperCase() || 'U'}
+            </div>
+            <div style={{ overflow: 'hidden' }}>
+              <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: G.text, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{customer.name}</p>
+              <p style={{ margin: 0, fontSize: 11, color: G.textL, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{customer.email}</p>
+            </div>
+          </div>
+        )}
+
+        {links.map(p => (
+          <button key={p} onClick={() => nav(p)} style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', textAlign: isRTL ? 'right' : 'left', background: 'none', border: 'none', cursor: 'pointer', color: G.text, fontFamily: FONT, fontSize: 16, padding: '13px 0', borderBottom: `1px solid ${G.bdr}`, fontWeight: 500 }}>
+            {p === 'myorders' && <Package size={16} />}{tr.nav[p]}
+          </button>
+        ))}
+
+        <div style={{ marginTop: 20 }}>
+          {isLoggedIn ? (
+            <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: `1px solid ${G.bdr}`, borderRadius: 6, cursor: 'pointer', color: '#C0392B', fontFamily: FONT, fontSize: 13, padding: '10px 16px', width: '100%', justifyContent: 'center' }}>
+              <LogOut size={14} />{tr.nav.logout}
+            </button>
+          ) : (
+            <button onClick={openLogin} style={{ display: 'flex', alignItems: 'center', gap: 8, background: G.gold, border: `1px solid ${G.gold}`, borderRadius: 6, cursor: 'pointer', color: G.white, fontFamily: FONT, fontSize: 13, padding: '10px 16px', width: '100%', justifyContent: 'center', fontWeight: 600 }}>
+              <User size={14} />{tr.nav.login} / {tr.nav.signup}
+            </button>
+          )}
+        </div>
+      </div>
+    </>,
+    document.body,
+  ) : null;
+
   return (
     <nav style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(253,248,245,0.96)', backdropFilter: 'blur(8px)', borderBottom: `1px solid ${G.bdr}`, fontFamily: FONT }}>
-      <style>{`
-        @media (max-width: 767px) {
-          .side-menu {
-            position: fixed !important;
-            top: 0 !important;
-            bottom: 0 !important;
-            width: 280px !important;
-            background: #FFFBF8 !important;
-            z-index: 9999 !important;
-            box-shadow: -4px 0 24px rgba(44,24,16,0.15) !important;
-            padding: 24px !important;
-            overflow-y: auto !important;
-          }
-          .menu-overlay {
-            position: fixed !important;
-            inset: 0 !important;
-            background: rgba(0,0,0,0.4) !important;
-            z-index: 9998 !important;
-          }
-        }
-      `}</style>
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 20px', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between', direction: isRTL ? 'rtl' : 'ltr' }}>
 
         {/* Brand */}
         <button onClick={() => nav('home')} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}>
           <Logo size={26} />
-          <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 20, fontWeight: 600, color: G.text, letterSpacing: '0.05em' }}>{tr.brand}</span>
+          <span style={{ fontFamily: BRAND, fontSize: 20, fontWeight: 600, color: G.text, letterSpacing: '0.05em' }}>{tr.brand}</span>
         </button>
 
         {/* Actions */}
@@ -54,6 +94,13 @@ export default function Navbar({
           >
             <Globe size={12} />{lang === 'ar' ? 'EN' : 'ع'}
           </button>
+
+          {/* Account indicator (logged-in only) → opens My Orders */}
+          {isLoggedIn && (
+            <button onClick={() => nav('myorders')} title={customer.name} style={{ background: G.gold, color: G.white, border: 'none', borderRadius: '50%', width: 30, height: 30, cursor: 'pointer', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {customer.name?.[0]?.toUpperCase() || 'U'}
+            </button>
+          )}
 
           {/* Wishlist */}
           <button onClick={() => nav('wishlist')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: G.textM, display: 'flex', padding: 6, position: 'relative' }}>
@@ -90,31 +137,7 @@ export default function Navbar({
         </div>
       )}
 
-      {/* Side menu */}
-      {menu && (
-        <>
-          <div
-            className="side-menu"
-            style={{ position: 'fixed', top: 0, right: isRTL ? 'auto' : 0, left: isRTL ? 0 : 'auto', bottom: 0, width: 280, background: '#FFFBF8', zIndex: 9999, boxShadow: '-4px 0 24px rgba(44,24,16,0.15)', padding: 24, direction: isRTL ? 'rtl' : 'ltr' }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
-              <Logo size={22} />
-              <button onClick={() => setMenu(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: G.textM }}><X size={20} /></button>
-            </div>
-            {['home', 'shop', 'about', 'contact', 'wishlist'].map(p => (
-              <button key={p} onClick={() => nav(p)} style={{ display: 'block', width: '100%', textAlign: isRTL ? 'right' : 'left', background: 'none', border: 'none', cursor: 'pointer', color: G.text, fontFamily: FONT, fontSize: 16, padding: '14px 0', borderBottom: `1px solid ${G.bdr}`, fontWeight: 500 }}>
-                {tr.nav[p]}
-              </button>
-            ))}
-            <div style={{ marginTop: 20 }}>
-              <button onClick={() => setLoginOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: `1px solid ${G.bdr}`, borderRadius: 6, cursor: 'pointer', color: G.textM, fontFamily: FONT, fontSize: 13, padding: '10px 16px', width: '100%', justifyContent: 'center' }}>
-                <User size={14} />{tr.nav.login}
-              </button>
-            </div>
-          </div>
-          <div className="menu-overlay" onClick={() => setMenu(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 9998 }} />
-        </>
-      )}
+      {drawer}
     </nav>
   );
 }

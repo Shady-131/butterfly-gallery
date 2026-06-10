@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { authService } from '../services/database';
+import { authService, logAdminAction } from '../services/database';
 
 const AuthContext = createContext(null);
 
@@ -22,6 +22,7 @@ export function AuthProvider({ children }) {
       setError(null);
       const { user, token } = await authService.login(email, password);
       setUser(user);
+      logAdminAction(user, 'Admin login', 'auth', `${user.name} signed in`);
       return { success: true, user, token };
     } catch (err) {
       setError(err.message);
@@ -30,6 +31,7 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
+    if (user) logAdminAction(user, 'Admin logout', 'auth', `${user.name} signed out`);
     authService.logout();
     setUser(null);
     setError(null);

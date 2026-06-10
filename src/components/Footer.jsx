@@ -1,17 +1,15 @@
 import { MessageCircle, Mail, MapPin } from 'lucide-react';
 import Logo from './ui/Logo';
 import { InstagramIcon, FacebookIcon, TikTokIcon } from './ui/SocialIcons';
-import { G, FONT, SERIF, SOCIAL_MEDIA } from '../constants/data';
+import { G, FONT, BRAND, SOCIAL_MEDIA, buildWaUrl } from '../constants/data';
 
-// Props: lang, nav, tr, isRTL
-export default function Footer({ lang, nav, tr, isRTL }) {
-
-  // تم حذف تعريف TikTokIcon الداخلي لأنه موجود فعلاً في SocialIcons
+// Props: lang, nav, tr, isRTL, social, waNumber
+export default function Footer({ lang, nav, tr, isRTL, social = SOCIAL_MEDIA, waNumber }) {
 
   const SOCIAL_LINKS = [
-    { icon: <InstagramIcon size={16} />, label: 'Instagram', href: SOCIAL_MEDIA.instagram },
-    { icon: <FacebookIcon  size={16} />, label: 'Facebook',  href: SOCIAL_MEDIA.facebook  },
-    { icon: <TikTokIcon size={16} />,    label: 'TikTok',    href: SOCIAL_MEDIA.tiktok   },
+    { icon: <InstagramIcon size={16} />, label: 'Instagram', href: social.instagram || SOCIAL_MEDIA.instagram },
+    { icon: <FacebookIcon  size={16} />, label: 'Facebook',  href: social.facebook  || SOCIAL_MEDIA.facebook  },
+    { icon: <TikTokIcon size={16} />,    label: 'TikTok',    href: social.tiktok    || SOCIAL_MEDIA.tiktok   },
   ];
 
   return (
@@ -22,7 +20,7 @@ export default function Footer({ lang, nav, tr, isRTL }) {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
             <Logo size={22} />
-            <span style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 600, color: G.goldL }}>{tr.brand}</span>
+            <span style={{ fontFamily: BRAND, fontSize: 20, fontWeight: 600, color: G.goldL, letterSpacing: '0.04em' }}>{tr.brand}</span>
           </div>
           <p style={{ fontSize: 13, lineHeight: 1.7, color: 'rgba(253,248,245,0.65)', marginBottom: 16 }}>{tr.tagline}</p>
           <div style={{ display: 'flex', gap: 10 }}>
@@ -66,8 +64,13 @@ export default function Footer({ lang, nav, tr, isRTL }) {
         <div>
           <p style={{ color: G.goldL, fontWeight: 500, fontSize: 13, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 16 }}>{isRTL ? 'تواصلي' : 'Contact'}</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <a href={buildWaUrl(waNumber)} target="_blank" rel="noreferrer"
+              style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'rgba(253,248,245,0.65)', fontSize: 13, textDecoration: 'none' }}
+              onMouseEnter={e => e.currentTarget.style.color = G.goldL}
+              onMouseLeave={e => e.currentTarget.style.color = 'rgba(253,248,245,0.65)'}>
+              <MessageCircle size={14} />WhatsApp
+            </a>
             {[
-              { icon: <MessageCircle size={14} />, text: 'WhatsApp' },
               { icon: <Mail size={14} />,          text: 'hello@butterflygallery.com' },
               ...(tr.contact.addr ? [{ icon: <MapPin size={14} />, text: tr.contact.addr }] : []),
             ].map(item => (

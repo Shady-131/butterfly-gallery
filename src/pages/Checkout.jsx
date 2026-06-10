@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import Btn from '../components/ui/Btn';
+import PublicSelect from '../components/ui/PublicSelect';
+import PriceText from '../components/ui/PriceText';
 import { G, FONT, SERIF, GOVS, PAYMENT_METHODS } from '../constants/data';
 
-// Props: lang, tr, isRTL, cart, coForm, setCoForm, total, discApplied, disc, nav, showToast, setCart
-export default function Checkout({ lang, tr, isRTL, cart, coForm, setCoForm, total, discApplied, disc, nav, showToast, setCart }) {
+// Props: lang, tr, isRTL, cart, coForm, setCoForm, total, sub, discApplied, disc, nav, showToast, setCart, addOrder, setLastOrder, customer
+export default function Checkout({ lang, tr, isRTL, cart, coForm, setCoForm, total, sub, discApplied, disc, nav, showToast, setCart, addOrder, setLastOrder, customer }) {
   const govList = lang === 'ar' ? GOVS.ar : GOVS.en;
   const [paymentProcessing, setPaymentProcessing] = useState(false);
   const [paymentConfirmed, setPaymentConfirmed] = useState(false);
@@ -16,7 +18,7 @@ export default function Checkout({ lang, tr, isRTL, cart, coForm, setCoForm, tot
     setPaymentProcessing(true);
   };
 
-  const placeOrder = () => {
+  const placeOrder = async () => {
     if (!coForm.name || !coForm.phone || !coForm.gov || !coForm.area) {
       showToast(isRTL ? 'يرجى ملء جميع الحقول' : 'Please fill all fields');
       return;
@@ -39,12 +41,45 @@ export default function Checkout({ lang, tr, isRTL, cart, coForm, setCoForm, tot
       return;
     }
 
+    // Persist the order so it shows up in the Admin Orders page + My Orders.
+    const order = {
+      customerId: customer?.id || null,
+      customer: {
+        name: coForm.name,
+        email: coForm.email || customer?.email || '',
+        phone: coForm.phone,
+        governorate: coForm.gov,
+        area: coForm.area,
+        address: coForm.area,
+      },
+      items: cart.map(i => ({ id: i.id, ar: i.ar, en: i.en, price: i.price, qty: i.qty })),
+      subtotal: sub,
+      discount: disc,
+      shipping: 0,
+      total,
+      paymentMethod: coForm.pay,
+      paymentScreenshot: paymentScreenshot ? paymentScreenshot.name : null,
+    };
+
+    let saved;
+    try {
+      // Save to the demo store; Admin Orders and the customer's My Orders both read it.
+      saved = addOrder ? await addOrder(order) : { ...order, id: `ORDER-${Date.now()}` };
+    } catch (err) {
+      showToast(isRTL ? 'تعذر حفظ الطلب' : 'Could not save the order');
+      return;
+    }
+
+    // Order is saved to the demo database (localStorage) and shown in the
+    // Admin Dashboard + customer My Orders. WhatsApp is no longer opened here.
+    if (setLastOrder) setLastOrder(saved);
     setCart([]);
     nav('confirmation');
   };
 
   const textFields = [
     { label: tr.co.name,  key: 'name',  type: 'text' },
+    { label: tr.auth.email, key: 'email', type: 'email' },
     { label: tr.co.phone, key: 'phone', type: 'tel'  },
     { label: tr.co.area,  key: 'area',  type: 'text' },
   ];
@@ -120,13 +155,15 @@ export default function Checkout({ lang, tr, isRTL, cart, coForm, setCoForm, tot
           {/* Governorate select */}
           <div style={{ marginBottom: 24 }}>
             <label style={{ display: 'block', color: G.textM, fontSize: 13, fontWeight: 500, marginBottom: 6 }}>{tr.co.gov}</label>
-            <select value={coForm.gov} onChange={e => setCoForm(f => ({ ...f, gov: e.target.value }))}
-              style={{ width: '100%', padding: '12px 14px', border: `1px solid ${G.bdr}`, borderRadius: 6, fontSize: 14, fontFamily: FONT, background: G.bg, color: G.text, outline: 'none', cursor: 'pointer', transition: 'border-color .2s' }}
-              onFocus={e => e.target.style.borderColor = G.gold}
-              onBlur={e => e.target.style.borderColor = G.bdr}>
-              <option value="">{isRTL ? 'اختاري المحافظة' : 'Select Governorate'}</option>
-              {govList.map(g => <option key={g} value={g}>{g}</option>)}
-            </select>
+            <PublicSelect
+              value={coForm.gov}
+              onChange={(v) => setCoForm(f => ({ ...f, gov: v }))}
+              isRTL={isRTL}
+              fullWidth
+              placeholder={isRTL ? 'اختاري المحافظة' : 'Select Governorate'}
+              ariaLabel={tr.co.gov}
+              options={govList.map(g => ({ value: g, label: g }))}
+            />
           </div>
 
           {/* Payment Methods */}
@@ -342,19 +379,19 @@ export default function Checkout({ lang, tr, isRTL, cart, coForm, setCoForm, tot
           <p style={{ fontFamily: SERIF, fontSize: 18, color: G.text, marginBottom: 16 }}>{tr.cart.sum}</p>
           {cart.map(i => (
             <div key={i.id} style={{ display: 'flex', gap: 10, marginBottom: 12, alignItems: 'center' }}>
-              <img src={i.img} alt="" style={{ width: 48, height: 48, borderRadius: 6, objectFit: 'cover' }} />
+              <img src={i.img} alt={lang === 'ar' ? i.ar : i.en} loading="lazy" decoding="async" style={{ width: 48, height: 48, borderRadius: 6, objectFit: 'cover' }} />
               <div style={{ flex: 1 }}>
                 <p style={{ color: G.text, fontSize: 12, margin: 0, fontWeight: 500 }}>{lang === 'ar' ? i.ar : i.en}</p>
                 <p style={{ color: G.textL, fontSize: 11, margin: '2px 0' }}>{isRTL ? 'الكمية:' : 'Qty:'} {i.qty}</p>
               </div>
-              <span style={{ color: G.gold, fontSize: 13, fontWeight: 600 }}>{(i.price * i.qty).toLocaleString()}</span>
+              <PriceText amount={i.price * i.qty} lang={lang} size={13} color={G.gold} />
             </div>
           ))}
           <div style={{ borderTop: `1px solid ${G.bdr}`, marginTop: 12, paddingTop: 12 }}>
-            {discApplied && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#2E7D32', marginBottom: 6 }}><span>{tr.cart.saved}</span><span>-{disc.toLocaleString()}</span></div>}
+            {discApplied && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#2E7D32', marginBottom: 6 }}><span>{tr.cart.saved}</span><PriceText amount={-disc} lang={lang} weight={400} /></div>}
             <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: SERIF, fontSize: 18, fontWeight: 600 }}>
               <span style={{ color: G.text }}>{tr.co.total}</span>
-              <span style={{ color: G.gold }}>{total.toLocaleString()} {tr.curr}</span>
+              <PriceText amount={total} lang={lang} size={18} weight={600} color={G.gold} />
             </div>
           </div>
         </div>

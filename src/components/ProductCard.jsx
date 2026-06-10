@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Heart, ShoppingBag, Eye } from 'lucide-react';
 import Stars from './ui/Stars';
-import { G } from '../constants/data';
+import PriceText from './ui/PriceText';
+import { G, isAvailable } from '../constants/data';
 
 // Props: p (product), lang, tr, onNav, onCart, onWish, inWish (bool), onQV
 export default function ProductCard({ p, lang, tr, onNav, onCart, onWish, inWish, onQV }) {
@@ -9,6 +10,7 @@ export default function ProductCard({ p, lang, tr, onNav, onCart, onWish, inWish
 
   const name = lang === 'ar' ? p.ar : p.en;
   const save = p.old ? Math.round((1 - p.price / p.old) * 100) : 0;
+  const avail = isAvailable(p);
 
   return (
     <div
@@ -16,11 +18,12 @@ export default function ProductCard({ p, lang, tr, onNav, onCart, onWish, inWish
       onMouseLeave={() => setHov(false)}
       style={{
         background:   G.white,
-        borderRadius: 8,
+        borderRadius: 12,
         overflow:     'hidden',
-        border:       `1px solid ${G.bdr}`,
-        transition:   'box-shadow .25s',
-        boxShadow:    hov ? '0 8px 32px rgba(44,24,16,0.10)' : '0 2px 8px rgba(44,24,16,0.04)',
+        border:       `1px solid ${hov ? G.gold : G.bdr}`,
+        transition:   'box-shadow .25s ease, transform .25s ease, border-color .25s ease',
+        boxShadow:    hov ? '0 14px 36px rgba(44,24,16,0.13)' : '0 2px 10px rgba(44,24,16,0.05)',
+        transform:    hov ? 'translateY(-4px)' : 'translateY(0)',
         position:     'relative',
         cursor:       'pointer',
       }}
@@ -31,9 +34,16 @@ export default function ProductCard({ p, lang, tr, onNav, onCart, onWish, inWish
         style={{ position: 'relative', overflow: 'hidden', height: 240, background: G.pinkL }}
       >
         <img
-          src={p.img} alt={name}
-          style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform .4s', transform: hov ? 'scale(1.07)' : 'scale(1)' }}
+          src={p.img} alt={name} loading="lazy" decoding="async"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform .4s', transform: hov ? 'scale(1.07)' : 'scale(1)', filter: avail ? 'none' : 'grayscale(0.6) opacity(0.7)' }}
         />
+
+        {/* Unavailable overlay */}
+        {!avail && (
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+            <span style={{ background: 'rgba(44,24,16,0.82)', color: G.white, fontSize: 12, fontWeight: 600, padding: '6px 14px', borderRadius: 4, letterSpacing: '0.03em' }}>{tr.unavailable}</span>
+          </div>
+        )}
 
         {/* Badges */}
         <div style={{ position: 'absolute', top: 10, left: 10, display: 'flex', flexDirection: 'column', gap: 5 }}>
@@ -73,14 +83,15 @@ export default function ProductCard({ p, lang, tr, onNav, onCart, onWish, inWish
         </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <span style={{ color: G.gold, fontWeight: 600, fontSize: 16 }}>{p.price.toLocaleString()} {tr.curr}</span>
-            {p.old && <span style={{ color: G.textL, fontSize: 12, textDecoration: 'line-through', marginInlineStart: 8 }}>{p.old.toLocaleString()}</span>}
+            <PriceText amount={p.price} lang={lang} size={16} color={G.gold} />
+            {p.old && <PriceText amount={p.old} lang={lang} size={12} color={G.textL} old style={{ marginInlineStart: 8 }} />}
           </div>
           <button
-            onClick={e => { e.stopPropagation(); onCart(p); }}
-            style={{ background: G.pink, border: 'none', borderRadius: 4, padding: '7px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: G.text, fontWeight: 500, transition: 'background .2s' }}
-            onMouseEnter={e => e.currentTarget.style.background = G.pinkD}
-            onMouseLeave={e => e.currentTarget.style.background = G.pink}
+            onClick={e => { e.stopPropagation(); if (avail) onCart(p); }}
+            disabled={!avail}
+            style={{ background: avail ? G.pink : G.bdr, border: 'none', borderRadius: 4, padding: '7px 12px', cursor: avail ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: avail ? G.text : G.textL, fontWeight: 500, transition: 'background .2s', opacity: avail ? 1 : 0.7 }}
+            onMouseEnter={e => { if (avail) e.currentTarget.style.background = G.pinkD; }}
+            onMouseLeave={e => { if (avail) e.currentTarget.style.background = G.pink; }}
           >
             <ShoppingBag size={13} />{lang === 'ar' ? 'أضيفي' : 'Add'}
           </button>

@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { useToast } from '../../context/ToastContext';
 import { Lock, Mail } from 'lucide-react';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const { error: toastErrorMsg } = useToast();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -44,7 +42,7 @@ export default function AdminLogin() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      fontFamily: "'Jost', sans-serif",
+      fontFamily: "'Tajawal', 'Jost', 'Segoe UI', sans-serif",
       padding: '20px',
     }}>
       <div style={{
@@ -113,7 +111,7 @@ export default function AdminLogin() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="admin@butterfly.com"
+                placeholder="rana@butterfly.com"
                 style={{
                   width: '100%',
                   padding: '10px 12px 10px 36px',
@@ -193,7 +191,7 @@ export default function AdminLogin() {
               marginTop: '6px',
               fontStyle: 'italic',
             }}>
-              Demo: admin@butterfly.com / admin123
+              Demo: rana@butterfly.com / rana123 · menna@butterfly.com / menna123
             </p>
           </div>
 

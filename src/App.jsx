@@ -1,17 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { MessageCircle } from 'lucide-react';
 
 // Providers
 import { AuthProvider } from './context/AuthContext';
-import { AppDataProvider } from './context/AppDataContext';
+import { AppDataProvider, useAppData } from './context/AppDataContext';
 import { ToastProvider } from './context/ToastContext';
+import { CustomerAuthProvider, useCustomerAuth } from './context/CustomerAuthContext';
 
 // Initialize database
 import { initializeDatabase } from './services/database';
 
 // Constants
-import { G, FONT, SERIF, TR } from './constants/data';
+import { G, FONT, BRAND, TR, PRODUCTS, SOCIAL_MEDIA, STORE_WHATSAPP, buildWaUrl, isAvailable } from './constants/data';
 
 // Layout
 import Navbar from './components/Navbar';
@@ -32,6 +33,7 @@ import Confirmation from './pages/Confirmation';
 import About        from './pages/About';
 import Contact      from './pages/Contact';
 import Wishlist     from './pages/Wishlist';
+import MyOrders     from './pages/MyOrders';
 
 // Admin Pages
 import AdminLogin from './admin/pages/AdminLogin';
@@ -43,11 +45,35 @@ import { PrivateRoute } from './utils/PrivateRoute';
 // ─── Loading Screen ───────────────────────────────────────────────────────────
 import Logo from './components/ui/Logo';
 
+// Persisted storage keys (cart & wishlist survive refresh).
+// Guests use the base key; logged-in customers use `<base>_<customerId>`.
+const CART_KEY = 'butterfly_gallery_cart';
+const WISH_KEY = 'butterfly_gallery_wishlist';
+const cartKeyFor = (id) => (id ? `${CART_KEY}_${id}` : CART_KEY);
+const wishKeyFor = (id) => (id ? `${WISH_KEY}_${id}` : WISH_KEY);
+const loadStored = (key) => {
+  try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch { return []; }
+};
+// Merge guest data into a customer's stored data on login (no lost items).
+const mergeCart = (a, b) => {
+  const map = new Map();
+  [...(a || []), ...(b || [])].forEach(it => {
+    const ex = map.get(it.id);
+    map.set(it.id, ex ? { ...ex, qty: ex.qty + it.qty } : { ...it });
+  });
+  return [...map.values()];
+};
+const mergeWish = (a, b) => {
+  const map = new Map();
+  [...(a || []), ...(b || [])].forEach(it => { if (!map.has(it.id)) map.set(it.id, it); });
+  return [...map.values()];
+};
+
 function LoadingScreen({ lang }) {
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: G.pinkL, fontFamily: FONT }}>
       <Logo size={48} />
-      <p style={{ marginTop: 20, color: G.gold, letterSpacing: '0.2em', fontSize: 13, fontFamily: SERIF }}>{TR[lang].brand.toUpperCase()}</p>
+      <p style={{ marginTop: 20, color: G.gold, letterSpacing: '0.2em', fontSize: 13, fontFamily: BRAND }}>{TR[lang].brand.toUpperCase()}</p>
       <div style={{ marginTop: 24, display: 'flex', gap: 6 }}>
         {[0, 1, 2].map(i => (
           <div key={i} style={{ width: 7, height: 7, borderRadius: '50%', background: G.gold, animation: `bounce 0.9s ${i * 0.2}s infinite`, opacity: 0.8 }} />
@@ -70,6 +96,23 @@ function Toast({ msg }) {
 
 // ─── Main Website App ─────────────────────────────────────────────────────────
 function Website() {
+  // ── Shared product source (same store the admin reads/writes) ──
+  const { products: dbProducts, addOrder, settings } = useAppData();
+  // Fall back to the bundled catalog while the store loads, and make sure every
+  // product has a `cat` field (admin-created products store it as `category`).
+  const products = (dbProducts && dbProducts.length ? dbProducts : PRODUCTS)
+    .map(p => ({ ...p, cat: p.cat || p.category }));
+
+  // ── Single source of truth for contact/social (admin Settings override defaults) ──
+  const social = { ...SOCIAL_MEDIA, ...(settings?.social || {}) };
+  const waNumber = String(settings?.social?.whatsapp || STORE_WHATSAPP).replace(/[^0-9]/g, '') || STORE_WHATSAPP;
+
+  // ── Logged-in customer (public account, separate from admin auth) ──
+  const { customer } = useCustomerAuth();
+  const customerId = customer?.id || null;
+  const cartKey = cartKeyFor(customerId);
+  const wishKey = wishKeyFor(customerId);
+
   // ── Language & routing ──
   const [lang, setLang]         = useState('ar');
   const [page, setPage]         = useState('home');
@@ -89,10 +132,15 @@ function Website() {
   const [catF, setCatF]         = useState('all');
   const [sortF, setSortF]       = useState('newest');
 
-  // ── Cart & Wishlist ──
-  const [cart, setCart]         = useState([]);
-  const [wish, setWish]         = useState([]);
+  // ── Cart & Wishlist (restored from localStorage so they survive refresh) ──
+  const [cart, setCart]         = useState(() => loadStored(cartKeyFor(customerId)));
+  const [wish, setWish]         = useState(() => loadStored(wishKeyFor(customerId)));
   const [qty, setQty]           = useState(1);
+  // Tracks which storage keys the current state belongs to (for safe switching).
+  const storageRef = useRef({ cart: cartKey, wish: wishKey, id: customerId });
+
+  // ── Last placed order (for the confirmation page / WhatsApp resend) ──
+  const [lastOrder, setLastOrder] = useState(null);
 
   // ── Discount ──
   const [discCode, setDiscCode]     = useState('');
@@ -100,7 +148,12 @@ function Website() {
 
   // ── Forms ──
   const [email, setEmail]       = useState('');
-  const [coForm, setCoForm]     = useState({ name: '', phone: '', gov: '', area: '', pay: 'cod' });
+  const [coForm, setCoForm]     = useState({ name: '', email: '', phone: '', gov: '', area: '', pay: 'cod' });
+
+  // Prefill checkout fields from the logged-in customer (without overwriting edits).
+  useEffect(() => {
+    if (customer) setCoForm(f => ({ ...f, name: f.name || customer.name || '', email: f.email || customer.email || '', phone: f.phone || customer.phone || '' }));
+  }, [customerId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Derived values ──
   const tr       = TR[lang];
@@ -115,11 +168,41 @@ function Website() {
     // Load Google Fonts
     const link = document.createElement('link');
     link.rel  = 'stylesheet';
-    link.href = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Jost:wght@300;400;500&display=swap';
+    link.href = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Jost:wght@300;400;500&family=Tajawal:wght@400;500;700&display=swap';
     document.head.appendChild(link);
+
+    // Global UI font (covers <body> and anything portalled outside the app root).
+    document.body.style.fontFamily = FONT;
 
     setTimeout(() => { setLoading(false); setTimeout(() => setPopup(true), 1500); }, 1800);
   }, []);
+
+  // On login/logout switch carts between guest and per-customer storage.
+  // (Runs before the persist effects below, so storageRef points at the right
+  // key by the time a cart/wish change is written.)
+  useEffect(() => {
+    if (storageRef.current.id === customerId) return;
+    const newCartKey = cartKeyFor(customerId);
+    const newWishKey = wishKeyFor(customerId);
+
+    if (storageRef.current.id === null && customerId) {
+      // Logging in: merge the guest cart/wishlist into the customer's stored data.
+      const mc = mergeCart(loadStored(newCartKey), cart);
+      const mw = mergeWish(loadStored(newWishKey), wish);
+      storageRef.current = { cart: newCartKey, wish: newWishKey, id: customerId };
+      setCart(mc);
+      setWish(mw);
+    } else {
+      // Logging out (or switching account): load that bucket's saved data.
+      storageRef.current = { cart: newCartKey, wish: newWishKey, id: customerId };
+      setCart(loadStored(newCartKey));
+      setWish(loadStored(newWishKey));
+    }
+  }, [customerId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Persist cart & wishlist whenever they change (to the active bucket).
+  useEffect(() => { localStorage.setItem(storageRef.current.cart, JSON.stringify(cart)); }, [cart]);
+  useEffect(() => { localStorage.setItem(storageRef.current.wish, JSON.stringify(wish)); }, [wish]);
 
   // ── Helpers ──
   const showToast = msg => { setToast(msg); setTimeout(() => setToast(null), 2500); };
@@ -132,6 +215,8 @@ function Website() {
   };
 
   const addCart = (p, q = 1) => {
+    // Unavailable / out-of-stock products are not orderable in the demo.
+    if (!isAvailable(p)) { showToast(tr.unavailable); return; }
     setCart(prev => {
       const existing = prev.find(i => i.id === p.id);
       return existing
@@ -155,15 +240,16 @@ function Website() {
 
   // ── Page map ──
   const pages = {
-    home:         <Home         {...sharedProps} addCart={addCart} toggleWish={toggleWish} inWish={inWish} setQv={setQv} email={email} setEmail={setEmail} showToast={showToast} />,
-    shop:         <Shop         {...sharedProps} catF={catF} setCatF={setCatF} sortF={sortF} setSortF={setSortF} searchQ={searchQ} setSearchQ={setSearchQ} addCart={addCart} toggleWish={toggleWish} inWish={inWish} setQv={setQv} />,
-    product:      <Product      {...sharedProps} selP={selP} setSelP={setSelP} addCart={addCart} toggleWish={toggleWish} inWish={inWish} qty={qty} setQty={setQty} />,
+    home:         <Home         {...sharedProps} products={products} addCart={addCart} toggleWish={toggleWish} inWish={inWish} setQv={setQv} email={email} setEmail={setEmail} showToast={showToast} />,
+    shop:         <Shop         {...sharedProps} products={products} catF={catF} setCatF={setCatF} sortF={sortF} setSortF={setSortF} searchQ={searchQ} setSearchQ={setSearchQ} addCart={addCart} toggleWish={toggleWish} inWish={inWish} setQv={setQv} />,
+    product:      <Product      {...sharedProps} products={products} selP={selP} setSelP={setSelP} addCart={addCart} toggleWish={toggleWish} inWish={inWish} qty={qty} setQty={setQty} setQv={setQv} />,
     cart:         <Cart         {...sharedProps} cart={cart} rmCart={rmCart} updQty={updQty} sub={sub} disc={disc} discApplied={discApplied} setDiscApplied={setDiscApplied} total={total} discCode={discCode} setDiscCode={setDiscCode} showToast={showToast} />,
-    checkout:     <Checkout     {...sharedProps} cart={cart} coForm={coForm} setCoForm={setCoForm} total={total} discApplied={discApplied} disc={disc} showToast={showToast} setCart={setCart} />,
-    confirmation: <Confirmation {...sharedProps} />,
+    checkout:     <Checkout     {...sharedProps} cart={cart} coForm={coForm} setCoForm={setCoForm} total={total} sub={sub} discApplied={discApplied} disc={disc} showToast={showToast} setCart={setCart} addOrder={addOrder} waNumber={waNumber} setLastOrder={setLastOrder} customer={customer} />,
+    confirmation: <Confirmation {...sharedProps} lastOrder={lastOrder} waNumber={waNumber} />,
     about:        <About        {...sharedProps} />,
-    contact:      <Contact      {...sharedProps} showToast={showToast} />,
+    contact:      <Contact      {...sharedProps} showToast={showToast} social={social} waNumber={waNumber} />,
     wishlist:     <Wishlist     {...sharedProps} wish={wish} addCart={addCart} toggleWish={toggleWish} setQv={setQv} />,
+    myorders:     <MyOrders     {...sharedProps} onLogin={() => setLoginOpen(true)} />,
   };
 
   if (loading) return <LoadingScreen lang={lang} />;
@@ -186,18 +272,19 @@ function Website() {
         searchOpen={searchOpen} setSearchOpen={setSearchOpen}
         menu={menu} setMenu={setMenu}
         setLoginOpen={setLoginOpen}
-        tr={tr} isRTL={isRTL}
+        tr={tr} isRTL={isRTL} showToast={showToast}
       />
 
       <div style={{ flex: 1, animation: 'fadeIn 0.4s ease' }}>
         {pages[page] ?? pages.home}
       </div>
 
-      <Footer lang={lang} nav={nav} tr={tr} isRTL={isRTL} />
+      <Footer lang={lang} nav={nav} tr={tr} isRTL={isRTL} social={social} waNumber={waNumber} />
 
       {/* Floating WhatsApp */}
-      <a href="https://wa.me/201000000000" target="_blank" rel="noreferrer"
-        style={{ position: 'fixed', bottom: 24, right: 24, background: '#25D366', borderRadius: '50%', width: 52, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(37,211,102,0.45)', zIndex: 500, textDecoration: 'none', transition: 'transform .2s' }}
+      <a href={buildWaUrl(waNumber)} target="_blank" rel="noreferrer"
+        aria-label={isRTL ? 'تواصلي معنا على واتساب' : 'Contact us on WhatsApp'} title={isRTL ? 'واتساب' : 'WhatsApp'}
+        style={{ position: 'fixed', bottom: 24, insetInlineEnd: 24, background: '#25D366', borderRadius: '50%', width: 52, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(37,211,102,0.45)', zIndex: 500, textDecoration: 'none', transition: 'transform .2s' }}
         onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.1)'}
         onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}>
         <MessageCircle size={26} color="white" fill="white" />
@@ -206,7 +293,7 @@ function Website() {
       <Toast msg={toast} />
 
       <QuickViewModal qv={qv} setQv={setQv} lang={lang} tr={tr} isRTL={isRTL} addCart={addCart} nav={nav} />
-      <LoginModal open={loginOpen} onClose={() => setLoginOpen(false)} isRTL={isRTL} tr={tr} />
+      <LoginModal open={loginOpen} onClose={() => setLoginOpen(false)} isRTL={isRTL} tr={tr} showToast={showToast} />
       <Popup
         show={popup} onClose={() => setPopup(false)} tr={tr} isRTL={isRTL}
         onClaim={() => { setDiscCode(tr.popup.code); setDiscApplied(true); setPopup(false); nav('shop'); }}
@@ -224,9 +311,10 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppDataProvider>
-          <ToastProvider>
-            <Routes>
+        <CustomerAuthProvider>
+          <AppDataProvider>
+            <ToastProvider>
+              <Routes>
               {/* Admin Routes */}
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route
@@ -240,9 +328,10 @@ export default function App() {
 
               {/* Public Website Routes */}
               <Route path="/*" element={<Website />} />
-            </Routes>
-          </ToastProvider>
-        </AppDataProvider>
+              </Routes>
+            </ToastProvider>
+          </AppDataProvider>
+        </CustomerAuthProvider>
       </AuthProvider>
     </BrowserRouter>
   );

@@ -5,8 +5,9 @@ import Btn         from '../components/ui/Btn';
 import Logo        from '../components/ui/Logo';
 import { G, FONT, SERIF, PRODUCTS, REVIEWS_DATA } from '../constants/data';
 
-// Props: lang, tr, isRTL, nav, addCart, toggleWish, inWish, setQv, email, setEmail, showToast
-export default function Home({ lang, tr, isRTL, nav, addCart, toggleWish, inWish, setQv, email, setEmail, showToast }) {
+// Props: lang, tr, isRTL, nav, products, addCart, toggleWish, inWish, setQv, email, setEmail, showToast
+export default function Home({ lang, tr, isRTL, nav, products, addCart, toggleWish, inWish, setQv, email, setEmail, showToast }) {
+  const list = products && products.length ? products : PRODUCTS;
   const CATEGORIES = [
     { k: 'jewelry',     img: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600&q=80' },
     { k: 'accessories', img: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=600&q=80' },
@@ -115,11 +116,11 @@ export default function Home({ lang, tr, isRTL, nav, addCart, toggleWish, inWish
               </div>
             </div>
             <div className="hero-images" style={{ display: 'grid' }}>
-              {PRODUCTS.slice(0, 4).map((p, i) => (
+              {list.slice(0, 4).map((p, i) => (
                 <div key={p.id} onClick={() => nav('product', p)} style={{ borderRadius: 8, overflow: 'hidden', cursor: 'pointer', height: i === 0 ? 240 : 180, background: G.pinkL, border: `1px solid ${G.bdr}`, transition: 'transform .2s' }}
                   onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-3px)'}
                   onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
-                  <img src={p.img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={p.img} alt={lang === 'ar' ? p.ar : p.en} decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
               ))}
             </div>
@@ -131,7 +132,7 @@ export default function Home({ lang, tr, isRTL, nav, addCart, toggleWish, inWish
       <div style={{ background: G.text, color: G.goldL, padding: '14px 20px' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', justifyContent: 'center', gap: 'clamp(20px,4vw,60px)', flexWrap: 'wrap' }}>
           {(isRTL
-            ? ['✦ توصيل مجاني فوق ٥٠٠ ج.م', '✦ جودة مضمونة ١٠٠٪', '✦ دفع آمن ومضمون']
+            ? ['✦ توصيل مجاني فوق ٥٠٠ جنيه', '✦ جودة مضمونة ١٠٠٪', '✦ دفع آمن ومضمون']
             : ['✦ Free delivery over 500 EGP', '✦ 100% quality guaranteed', '✦ Secure payment']
           ).map(t => <span key={t} style={{ fontSize: 12, letterSpacing: '0.05em', fontWeight: 500 }}>{t}</span>)}
         </div>
@@ -149,7 +150,7 @@ export default function Home({ lang, tr, isRTL, nav, addCart, toggleWish, inWish
               onMouseEnter={e => { e.currentTarget.querySelector('img').style.transform = 'scale(1.06)'; e.currentTarget.querySelector('.cat-ov').style.background = 'rgba(44,24,16,0.45)'; }}
               onMouseLeave={e => { e.currentTarget.querySelector('img').style.transform = 'scale(1)'; e.currentTarget.querySelector('.cat-ov').style.background = 'rgba(44,24,16,0.28)'; }}
             >
-              <img src={c.img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform .4s' }} />
+              <img src={c.img} alt={tr.cats[c.k]} loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform .4s' }} />
               <div className="cat-ov" style={{ position: 'absolute', inset: 0, background: 'rgba(44,24,16,0.28)', transition: 'background .3s', display: 'flex', alignItems: 'flex-end', padding: 20 }}>
                 <div>
                   <p style={{ color: G.white, fontFamily: SERIF, fontSize: 'clamp(20px,4vw,26px)', fontWeight: 600, margin: '0 0 4px' }}>{tr.cats[c.k]}</p>
@@ -172,7 +173,7 @@ export default function Home({ lang, tr, isRTL, nav, addCart, toggleWish, inWish
             <Btn small outline onClick={() => nav('shop')}>{tr.feat.all} →</Btn>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 20 }}>
-            {PRODUCTS.slice(0, 8).map(p => (
+            {list.slice(0, 8).map(p => (
               <ProductCard key={p.id} p={p} lang={lang} tr={tr} onNav={nav} onCart={addCart} onWish={toggleWish} inWish={inWish(p.id)} onQV={setQv} />
             ))}
           </div>
@@ -215,11 +216,11 @@ export default function Home({ lang, tr, isRTL, nav, addCart, toggleWish, inWish
             <h3 style={{ fontFamily: SERIF, fontSize: 'clamp(24px,4vw,28px)', color: G.text, margin: 0 }}>@butterfly.gallery</h3>
           </div>
           <div className="instagram-grid" style={{ display: 'grid' }}>
-            {PRODUCTS.slice(4, 12).map(p => (
+            {list.slice(4, 12).map(p => (
               <div key={p.id} style={{ borderRadius: 6, overflow: 'hidden', aspectRatio: '1', cursor: 'pointer', position: 'relative' }}
                 onMouseEnter={e => e.currentTarget.querySelector('.ig-ov').style.opacity = 1}
                 onMouseLeave={e => e.currentTarget.querySelector('.ig-ov').style.opacity = 0}>
-                <img src={p.img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img src={p.img} alt={lang === 'ar' ? p.ar : p.en} loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 <div className="ig-ov" style={{ position: 'absolute', inset: 0, background: 'rgba(201,168,76,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0, transition: 'opacity .3s' }}>
                   <InstagramIcon size={24} color={G.white} />
                 </div>

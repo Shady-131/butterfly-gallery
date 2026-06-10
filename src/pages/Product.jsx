@@ -1,64 +1,129 @@
-import { Search } from 'lucide-react';
+import { Heart, ShoppingBag, Minus, Plus } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
-import { G, FONT, SERIF, PRODUCTS } from '../constants/data';
+import Stars from '../components/ui/Stars';
+import Btn   from '../components/ui/Btn';
+import PriceText from '../components/ui/PriceText';
+import { G, FONT, SERIF, PRODUCTS, isAvailable } from '../constants/data';
 
-// Props: lang, tr, isRTL, catF, setCatF, sortF, setSortF,
-//        searchQ, setSearchQ, nav, addCart, toggleWish, inWish, setQv
-export default function Shop({ lang, tr, isRTL, catF, setCatF, sortF, setSortF, searchQ, setSearchQ, nav, addCart, toggleWish, inWish, setQv }) {
-  const filtered = PRODUCTS
-    .filter(p => catF === 'all' || p.cat === catF)
-    .filter(p => {
-      if (!searchQ) return true;
-      return (lang === 'ar' ? p.ar : p.en).toLowerCase().includes(searchQ.toLowerCase());
-    })
-    .sort((a, b) =>
-      sortF === 'newest' ? b.id - a.id :
-      sortF === 'best'   ? b.rc - a.rc :
-      sortF === 'pAsc'   ? a.price - b.price : b.price - a.price
-    );
+const catLabel = (cat, lang) =>
+  lang === 'ar'
+    ? (cat === 'jewelry' ? 'مجوهرات' : cat === 'handbags' ? 'حقائب' : 'إكسسوارات')
+    : cat;
 
-  const CATS = ['all', 'jewelry', 'accessories', 'handbags'];
+// Props: lang, tr, isRTL, nav, products, selP, setSelP, addCart, toggleWish, inWish, qty, setQty, setQv
+export default function Product({ lang, tr, isRTL, nav, products, selP, setSelP, addCart, toggleWish, inWish, qty, setQty, setQv }) {
+  const list = products && products.length ? products : PRODUCTS;
+
+  // No product selected (e.g. navigated here directly) — guide the user back.
+  if (!selP) return (
+    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '80px 20px', textAlign: 'center', fontFamily: FONT, direction: isRTL ? 'rtl' : 'ltr' }}>
+      <p style={{ fontFamily: SERIF, fontSize: 22, color: G.text, marginBottom: 20 }}>
+        {isRTL ? 'لم يتم اختيار منتج' : 'No product selected'}
+      </p>
+      <Btn onClick={() => nav('shop')}>{isRTL ? 'تصفحي المتجر' : 'Browse Shop'}</Btn>
+    </div>
+  );
+
+  const name = lang === 'ar' ? selP.ar : selP.en;
+  const desc = lang === 'ar' ? selP.dAr : selP.dEn;
+  const save = selP.old ? Math.round((1 - selP.price / selP.old) * 100) : 0;
+  const inW  = inWish(selP.id);
+  const avail = isAvailable(selP);
+
+  const related = list.filter(p => p.cat === selP.cat && p.id !== selP.id).slice(0, 4);
 
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '40px 20px', fontFamily: FONT, direction: isRTL ? 'rtl' : 'ltr' }}>
-      <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontFamily: SERIF, fontSize: 38, fontWeight: 600, color: G.text, margin: '0 0 4px' }}>{tr.shop.title}</h1>
-        <div style={{ width: 40, height: 2, background: G.gold }} />
-      </div>
+    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 20px', fontFamily: FONT, direction: isRTL ? 'rtl' : 'ltr' }}>
+      <style>{`
+        @media (max-width: 767px) {
+          .product-layout { grid-template-columns: 1fr !important; }
+        }
+        @media (min-width: 768px) {
+          .product-layout { grid-template-columns: 1fr 1fr !important; }
+        }
+      `}</style>
 
-      {/* Filters */}
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 28, alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          {CATS.map(c => (
-            <button key={c} onClick={() => setCatF(c)}
-              style={{ background: catF === c ? G.gold : G.white, color: catF === c ? G.white : G.textM, border: `1px solid ${catF === c ? G.gold : G.bdr}`, borderRadius: 20, padding: '7px 16px', fontSize: 13, cursor: 'pointer', fontWeight: catF === c ? 600 : 400, fontFamily: FONT, transition: 'all .2s' }}>
-              {tr.shop[c]}
+      {/* Back */}
+      <button onClick={() => nav('shop')} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', color: G.textM, fontSize: 13, marginBottom: 24, fontFamily: FONT, padding: 0 }}>
+        {isRTL ? '→' : '←'} {isRTL ? 'رجوع للمتجر' : 'Back to Shop'}
+      </button>
+
+      <div className="product-layout" style={{ display: 'grid', gap: 36, alignItems: 'start' }}>
+        {/* Image */}
+        <div style={{ position: 'relative', borderRadius: 12, overflow: 'hidden', background: G.pinkL, border: `1px solid ${G.bdr}` }}>
+          <img src={selP.img} alt={name} decoding="async" style={{ width: '100%', height: '100%', maxHeight: 520, objectFit: 'cover', display: 'block' }} />
+          <div style={{ position: 'absolute', top: 14, insetInlineStart: 14, display: 'flex', flexDirection: 'column', gap: 5 }}>
+            {selP.isNew && <span style={{ background: G.gold,    color: G.white, fontSize: 11, fontWeight: 600, padding: '4px 10px', borderRadius: 3 }}>{tr.badges.n}</span>}
+            {selP.best  && <span style={{ background: G.pinkD,   color: G.white, fontSize: 11, fontWeight: 600, padding: '4px 10px', borderRadius: 3 }}>{tr.badges.b}</span>}
+            {selP.old   && <span style={{ background: '#2C1810', color: G.white, fontSize: 11, fontWeight: 600, padding: '4px 10px', borderRadius: 3 }}>{save}% {tr.badges.s}</span>}
+          </div>
+        </div>
+
+        {/* Details */}
+        <div>
+          <p style={{ color: G.textL, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', margin: '0 0 8px' }}>
+            {catLabel(selP.cat, lang)}
+          </p>
+          <h1 style={{ fontFamily: SERIF, fontSize: 'clamp(26px,4vw,36px)', fontWeight: 600, color: G.text, margin: '0 0 12px' }}>{name}</h1>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 16 }}>
+            <Stars n={selP.stars} />
+            <span style={{ color: G.textL, fontSize: 12 }}>({selP.rc})</span>
+            {avail
+              ? <span style={{ color: '#2E7D32', fontSize: 12, marginInlineStart: 10 }}>● {tr.prod.inStock}</span>
+              : <span style={{ color: '#C0392B', fontSize: 12, marginInlineStart: 10 }}>● {tr.unavailable}</span>}
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 20 }}>
+            <PriceText amount={selP.price} lang={lang} size={28} color={G.gold} />
+            {selP.old && <PriceText amount={selP.old} lang={lang} size={16} color={G.textL} old />}
+          </div>
+
+          {desc && <p style={{ color: G.textM, fontSize: 14, lineHeight: 1.9, marginBottom: 28 }}>{desc}</p>}
+
+          {/* Quantity */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 24 }}>
+            <span style={{ color: G.textM, fontSize: 13, fontWeight: 500 }}>{tr.prod.qty}</span>
+            <div style={{ display: 'flex', alignItems: 'center', border: `1px solid ${G.bdr}`, borderRadius: 6 }}>
+              <button onClick={() => setQty(q => Math.max(1, q - 1))} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px 12px', color: G.textM }}><Minus size={14} /></button>
+              <span style={{ padding: '8px 14px', fontSize: 14, color: G.text, minWidth: 34, textAlign: 'center' }}>{qty}</span>
+              <button onClick={() => setQty(q => q + 1)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px 12px', color: G.textM }}><Plus size={14} /></button>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            {avail ? (
+              <Btn onClick={() => { addCart(selP, qty); setQty(1); }} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <ShoppingBag size={16} />{tr.prod.addCart}
+              </Btn>
+            ) : (
+              <button disabled style={{ display: 'flex', alignItems: 'center', gap: 8, background: G.bdr, color: G.textL, border: `1.5px solid ${G.bdr}`, borderRadius: 4, padding: '12px 28px', fontSize: 14, fontWeight: 500, cursor: 'not-allowed', fontFamily: FONT }}>
+                <ShoppingBag size={16} />{tr.unavailable}
+              </button>
+            )}
+            <button
+              onClick={() => toggleWish(selP)}
+              style={{ display: 'flex', alignItems: 'center', gap: 8, background: inW ? G.pinkL : 'transparent', border: `1.5px solid ${inW ? G.pinkD : G.bdr}`, borderRadius: 4, padding: '12px 20px', cursor: 'pointer', color: inW ? G.pinkD : G.textM, fontSize: 14, fontFamily: FONT, fontWeight: 500 }}
+            >
+              <Heart size={16} fill={inW ? G.pinkD : 'none'} stroke={inW ? G.pinkD : G.textM} />{tr.prod.addWish}
             </button>
-          ))}
-        </div>
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-          <div style={{ position: 'relative' }}>
-            <Search size={14} style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', insetInlineStart: 10, color: G.textL }} />
-            <input value={searchQ} onChange={e => setSearchQ(e.target.value)} placeholder={tr.nav.ph}
-              style={{ padding: `9px 12px 9px ${isRTL ? '12px' : '32px'}`, border: `1px solid ${G.bdr}`, borderRadius: 6, fontSize: 13, fontFamily: FONT, outline: 'none', background: G.bg, color: G.text, width: 180 }} />
           </div>
-          <select value={sortF} onChange={e => setSortF(e.target.value)}
-            style={{ padding: '9px 12px', border: `1px solid ${G.bdr}`, borderRadius: 6, fontSize: 13, fontFamily: FONT, background: G.bg, color: G.text, outline: 'none', cursor: 'pointer' }}>
-            <option value="newest">{tr.shop.newest}</option>
-            <option value="best">{tr.shop.best}</option>
-            <option value="pAsc">{tr.shop.pAsc}</option>
-            <option value="pDesc">{tr.shop.pDesc}</option>
-          </select>
         </div>
       </div>
 
-      {/* Grid */}
-      {filtered.length === 0
-        ? <div style={{ textAlign: 'center', padding: '80px 20px', color: G.textL }}><Search size={40} style={{ opacity: .3, marginBottom: 12 }} /><p>{tr.shop.noRes}</p></div>
-        : <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 20 }}>
-            {filtered.map(p => <ProductCard key={p.id} p={p} lang={lang} tr={tr} onNav={nav} onCart={addCart} onWish={toggleWish} inWish={inWish(p.id)} onQV={setQv} />)}
+      {/* Related products */}
+      {related.length > 0 && (
+        <div style={{ marginTop: 64 }}>
+          <h2 style={{ fontFamily: SERIF, fontSize: 26, fontWeight: 600, color: G.text, margin: '0 0 6px' }}>{tr.prod.related}</h2>
+          <div style={{ width: 40, height: 2, background: G.gold, marginBottom: 24 }} />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 20 }}>
+            {related.map(p => (
+              <ProductCard key={p.id} p={p} lang={lang} tr={tr} onNav={nav} onCart={addCart} onWish={toggleWish} inWish={inWish(p.id)} onQV={setQv} />
+            ))}
           </div>
-      }
+        </div>
+      )}
     </div>
   );
 }

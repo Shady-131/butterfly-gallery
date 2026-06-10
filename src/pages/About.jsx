@@ -15,7 +15,11 @@ export default function About({ lang, tr, isRTL, nav }) {
         <div style={{ background: G.white, borderRadius: 12, padding: 40, border: `1px solid ${G.bdr}`, marginBottom: 24, textAlign: 'center' }}>
           <p style={{ color: G.textM, fontSize: 16, lineHeight: 1.9 }}>{tr.about.story}</p>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+        <style>{`
+          .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+          @media (max-width: 600px) { .about-grid { grid-template-columns: 1fr; } }
+        `}</style>
+        <div className="about-grid">
           {[
             { title: tr.about.vis, text: tr.about.visT, icon: '🌟' },
             { title: tr.about.mis, text: tr.about.misT, icon: '🦋' },

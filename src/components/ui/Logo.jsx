@@ -1,10 +1,11 @@
-const Logo = () => {
+const Logo = ({ size = 32 }) => {
   return (
     <div className="logo">
-      <img 
-        src="/logo1.png" 
-        alt="Logo" 
-        style={{ width: '80px', height: 'auto', display: 'block' }} 
+      <img
+        src="/logo1.png"
+        alt="Butterfly Gallery"
+        decoding="async"
+        style={{ width: size, height: 'auto', display: 'block' }}
       />
     </div>
   );

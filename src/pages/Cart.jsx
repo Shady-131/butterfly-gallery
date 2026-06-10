@@ -1,5 +1,6 @@
 import { ShoppingBag, Minus, Plus, Trash2, Check } from 'lucide-react';
 import Btn from '../components/ui/Btn';
+import PriceText from '../components/ui/PriceText';
 import { G, FONT, SERIF } from '../constants/data';
 
 // Props: lang, tr, isRTL, cart, rmCart, updQty, sub, disc,
@@ -65,10 +66,10 @@ export default function Cart({ lang, tr, isRTL, cart, rmCart, updQty, sub, disc,
         <div>
           {cart.map(item => (
             <div key={item.id} style={{ display: 'flex', gap: 16, padding: '16px 0', borderBottom: `1px solid ${G.bdr}`, alignItems: 'flex-start' }}>
-              <img src={item.img} alt="" style={{ width: 70, height: 70, minWidth: 70, borderRadius: 8, objectFit: 'cover', border: `1px solid ${G.bdr}`, cursor: 'pointer' }} onClick={() => nav('product', item)} />
+              <img src={item.img} alt={lang === 'ar' ? item.ar : item.en} loading="lazy" decoding="async" style={{ width: 70, height: 70, minWidth: 70, borderRadius: 8, objectFit: 'cover', border: `1px solid ${G.bdr}`, cursor: 'pointer' }} onClick={() => nav('product', item)} />
               <div style={{ flex: 1 }}>
                 <p style={{ color: G.text, fontWeight: 500, fontSize: 15, margin: '0 0 4px', cursor: 'pointer' }} onClick={() => nav('product', item)}>{lang === 'ar' ? item.ar : item.en}</p>
-                <p style={{ color: G.gold, fontWeight: 600, fontSize: 15, margin: '0 0 10px' }}>{item.price.toLocaleString()} {tr.curr}</p>
+                <p style={{ margin: '0 0 10px' }}><PriceText amount={item.price} lang={lang} size={15} color={G.gold} /></p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <div style={{ display: 'flex', alignItems: 'center', border: `1px solid ${G.bdr}`, borderRadius: 5 }}>
                     <button onClick={() => updQty(item.id, item.qty - 1)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '6px 10px', color: G.textM }}><Minus size={12} /></button>
@@ -80,7 +81,7 @@ export default function Cart({ lang, tr, isRTL, cart, rmCart, updQty, sub, disc,
                   </button>
                 </div>
               </div>
-              <p style={{ color: G.text, fontWeight: 600, fontSize: 15, minWidth: 80, textAlign: 'right', display: 'none' }} className="price-col">{(item.price * item.qty).toLocaleString()} {tr.curr}</p>
+              <p style={{ minWidth: 80, textAlign: 'right', display: 'none' }} className="price-col"><PriceText amount={item.price * item.qty} lang={lang} size={15} color={G.text} /></p>
             </div>
           ))}
         </div>
@@ -97,17 +98,17 @@ export default function Cart({ lang, tr, isRTL, cart, rmCart, updQty, sub, disc,
           </div>
           {discApplied && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#2E7D32', fontSize: 12, marginBottom: 12, background: '#E8F5E9', borderRadius: 4, padding: '6px 10px' }}>
-              <Check size={13} />{tr.cart.saved}: {disc.toLocaleString()} {tr.curr}
+              <Check size={13} />{tr.cart.saved}: <PriceText amount={disc} lang={lang} weight={500} />
             </div>
           )}
           <div style={{ fontSize: 14, color: G.textM }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0' }}><span>{tr.cart.subtotal}</span><span style={{ fontWeight: 500 }}>{sub.toLocaleString()} {tr.curr}</span></div>
-            {discApplied && <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', color: '#2E7D32' }}><span>{tr.cart.saved}</span><span>-{disc.toLocaleString()} {tr.curr}</span></div>}
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0' }}><span>{tr.cart.subtotal}</span><PriceText amount={sub} lang={lang} weight={500} /></div>
+            {discApplied && <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', color: '#2E7D32' }}><span>{tr.cart.saved}</span><PriceText amount={-disc} lang={lang} weight={400} /></div>}
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0' }}><span>{tr.cart.ship}</span><span style={{ color: '#2E7D32', fontWeight: 500 }}>{tr.cart.free}</span></div>
           </div>
           <div style={{ borderTop: `1px solid ${G.bdr}`, marginTop: 12, paddingTop: 12, display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
             <span style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 600, color: G.text }}>{isRTL ? 'الإجمالي' : 'Total'}</span>
-            <span style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 600, color: G.gold }}>{total.toLocaleString()} {tr.curr}</span>
+            <PriceText amount={total} lang={lang} size={18} weight={600} color={G.gold} />
           </div>
           <Btn onClick={() => nav('checkout')} style={{ width: '100%', boxSizing: 'border-box', textAlign: 'center' }}>{tr.cart.checkout} →</Btn>
           <button onClick={() => nav('shop')} style={{ display: 'block', width: '100%', textAlign: 'center', background: 'none', border: 'none', cursor: 'pointer', color: G.textL, fontSize: 13, marginTop: 12, fontFamily: FONT, padding: '8px 0' }}>

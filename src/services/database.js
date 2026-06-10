@@ -3,6 +3,8 @@
  * Can be easily migrated to Firebase by updating these methods
  */
 
+import { PRODUCTS } from '../constants/data';
+
 const DB_PREFIX = 'butterfly_gallery_';
 
 // Default app data structure
@@ -19,32 +21,40 @@ const DEFAULT_DATA = {
     social: {
       instagram: 'https://www.instagram.com/butterfly.gallery510?igsh=cXo5bTgzcjk0OGZv',
       facebook: 'https://www.facebook.com/share/g/1Yi5cNkjpN/?mibextid=wwXIfr',
-      tiktok: 'https://www.tiktok.com/@butterfly',
-      whatsapp: '+201001234567',
+      tiktok: 'https://www.tiktok.com/@butterflyg510?_r=1&_t=ZS-95eOx6HpejJ',
+      whatsapp: '201001234567',
     },
   },
-  products: [],
+  // Seed the storefront catalog so admin and storefront share one source.
+  products: PRODUCTS,
   orders: [],
-  users: {
-    admin: {
-      email: 'admin@butterfly.com',
-      password: 'admin123', // CHANGE THIS IN PRODUCTION
-      role: 'admin',
-    },
-  },
 };
 
-// ─── Auth Service ───────────────────────────────────────────────────────────
-export const authService = {
-  login: async (email, password) => {
-    const users = JSON.parse(localStorage.getItem(DB_PREFIX + 'users') || '{}');
-    const user = users.admin;
+// ─── Admin accounts (demo only — plaintext passwords, no backend) ─────────────
+// These two are the source of truth for /admin/login. Customers are stored
+// separately (customerAuthService) and can never access the dashboard.
+const ADMIN_ACCOUNTS = [
+  { id: 'admin-rana',  name: 'Rana',  email: 'rana@butterfly.com',  password: 'rana123',  role: 'admin' },
+  { id: 'admin-menna', name: 'Menna', email: 'menna@butterfly.com', password: 'menna123', role: 'admin' },
+];
 
-    if (!user || user.email !== email || user.password !== password) {
+// Strip the password before exposing an admin to the session/app.
+const safeAdmin = (a) => (a ? { id: a.id, name: a.name, email: a.email, role: a.role } : null);
+
+// ─── Auth Service (admin) ─────────────────────────────────────────────────────
+export const authService = {
+  accounts: ADMIN_ACCOUNTS.map(safeAdmin),
+
+  login: async (email, password) => {
+    const cleanEmail = String(email || '').trim().toLowerCase();
+    const account = ADMIN_ACCOUNTS.find(a => a.email === cleanEmail);
+
+    if (!account || account.password !== password) {
       throw new Error('Invalid credentials');
     }
 
-    const token = btoa(`${email}:${Date.now()}`);
+    const user = safeAdmin(account);
+    const token = btoa(`${account.email}:${Date.now()}`);
     localStorage.setItem(DB_PREFIX + 'authToken', token);
     localStorage.setItem(DB_PREFIX + 'currentUser', JSON.stringify(user));
 
@@ -63,6 +73,109 @@ export const authService = {
 
   isAuthenticated: () => {
     return !!localStorage.getItem(DB_PREFIX + 'authToken');
+  },
+};
+
+// ─── Audit Log Service (admin activity trail) ─────────────────────────────────
+const ACTIVITY_KEY = DB_PREFIX + 'admin_activity_logs';
+
+export const auditLogService = {
+  getLogs: () => {
+    try { return JSON.parse(localStorage.getItem(ACTIVITY_KEY) || '[]'); }
+    catch { return []; }
+  },
+
+  addLog: (entry = {}) => {
+    const logs = auditLogService.getLogs();
+    const log = {
+      id: `LOG-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      adminId: entry.adminId || null,
+      adminName: entry.adminName || 'Unknown',
+      adminEmail: entry.adminEmail || '',
+      action: entry.action || '',
+      entityType: entry.entityType || '',
+      entityId: entry.entityId ?? null,
+      entityName: entry.entityName ?? null,
+      details: entry.details || '',
+      before: entry.before ?? null,
+      after: entry.after ?? null,
+      createdAt: new Date().toISOString(),
+    };
+    logs.unshift(log); // newest first
+    // Keep the demo log bounded so localStorage never bloats.
+    localStorage.setItem(ACTIVITY_KEY, JSON.stringify(logs.slice(0, 500)));
+    return log;
+  },
+
+  clearLogs: () => localStorage.removeItem(ACTIVITY_KEY),
+};
+
+// Convenience helper for admin action handlers.
+export const logAdminAction = (admin, action, entityType, details = '', extra = {}) =>
+  auditLogService.addLog({
+    adminId: admin?.id,
+    adminName: admin?.name,
+    adminEmail: admin?.email,
+    action,
+    entityType,
+    details,
+    entityId: extra.entityId,
+    entityName: extra.entityName,
+    before: extra.before,
+    after: extra.after,
+  });
+
+// ─── Customer Auth Service (demo only — plaintext passwords in localStorage) ──
+export const customerAuthService = {
+  getCustomers: () => {
+    try { return JSON.parse(localStorage.getItem(DB_PREFIX + 'customers') || '[]'); }
+    catch { return []; }
+  },
+
+  getSession: () => {
+    try { return JSON.parse(localStorage.getItem(DB_PREFIX + 'customerSession') || 'null'); }
+    catch { return null; }
+  },
+
+  // Strip the password before exposing a customer to the app/session.
+  _safe: (c) => (c ? { id: c.id, name: c.name, email: c.email, phone: c.phone || '', createdAt: c.createdAt } : null),
+
+  signup: async ({ name, email, phone, password }) => {
+    const customers = customerAuthService.getCustomers();
+    const cleanEmail = String(email || '').trim().toLowerCase();
+    if (!name || !cleanEmail || !password) throw new Error('MISSING_FIELDS');
+    if (customers.some(c => c.email === cleanEmail)) throw new Error('EMAIL_EXISTS');
+
+    const customer = {
+      id: `CUST-${Date.now()}`,
+      name: String(name).trim(),
+      email: cleanEmail,
+      phone: phone ? String(phone).trim() : '',
+      password, // demo only — never do this in production
+      createdAt: new Date().toISOString(),
+    };
+    customers.push(customer);
+    localStorage.setItem(DB_PREFIX + 'customers', JSON.stringify(customers));
+
+    const safe = customerAuthService._safe(customer);
+    localStorage.setItem(DB_PREFIX + 'customerSession', JSON.stringify(safe));
+    return safe;
+  },
+
+  login: async ({ email, password }) => {
+    const customers = customerAuthService.getCustomers();
+    const cleanEmail = String(email || '').trim().toLowerCase();
+    const found = customers.find(c => c.email === cleanEmail);
+    if (!found) throw new Error('NO_EMAIL');
+    if (found.password !== password) throw new Error('WRONG_PASSWORD');
+
+    const safe = customerAuthService._safe(found);
+    localStorage.setItem(DB_PREFIX + 'customerSession', JSON.stringify(safe));
+    return safe;
+  },
+
+  logout: () => {
+    localStorage.removeItem(DB_PREFIX + 'customerSession');
   },
 };
 
@@ -150,11 +263,13 @@ export const ordersService = {
 
   addOrder: async (order) => {
     const orders = await ordersService.getOrders();
+    const now = new Date().toISOString();
     const newOrder = {
       ...order,
       id: `ORDER-${Date.now()}`,
       status: 'pending',
-      createdAt: new Date().toISOString(),
+      createdAt: now,
+      updatedAt: now,
     };
     orders.push(newOrder);
     localStorage.setItem(DB_PREFIX + 'orders', JSON.stringify(orders));
@@ -186,9 +301,7 @@ export const initializeDatabase = () => {
     localStorage.setItem(settingsKey, JSON.stringify(DEFAULT_DATA.settings));
   }
 
-  // Create default users if not exists
-  const usersKey = DB_PREFIX + 'users';
-  if (!localStorage.getItem(usersKey)) {
-    localStorage.setItem(usersKey, JSON.stringify(DEFAULT_DATA.users));
-  }
+  // Admin accounts (Rana, Menna) live in code (ADMIN_ACCOUNTS) — no seeding needed.
+  // Remove any stale single-admin "users" blob from older demo builds.
+  localStorage.removeItem(DB_PREFIX + 'users');
 };

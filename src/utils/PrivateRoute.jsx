@@ -13,7 +13,7 @@ export function PrivateRoute({ children }) {
         justifyContent: 'center',
         minHeight: '100vh',
         background: '#FDF8F5',
-        fontFamily: "'Jost', sans-serif",
+        fontFamily: "'Tajawal', 'Jost', 'Segoe UI', sans-serif",
       }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '48px', marginBottom: '16px' }}>🦋</div>

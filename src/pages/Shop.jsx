@@ -1,11 +1,13 @@
 import { Search } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
+import PublicSelect from '../components/ui/PublicSelect';
 import { G, FONT, SERIF, PRODUCTS } from '../constants/data';
 
-// Props: lang, tr, isRTL, catF, setCatF, sortF, setSortF,
+// Props: lang, tr, isRTL, products, catF, setCatF, sortF, setSortF,
 //        searchQ, setSearchQ, nav, addCart, toggleWish, inWish, setQv
-export default function Shop({ lang, tr, isRTL, catF, setCatF, sortF, setSortF, searchQ, setSearchQ, nav, addCart, toggleWish, inWish, setQv }) {
-  const filtered = PRODUCTS
+export default function Shop({ lang, tr, isRTL, products, catF, setCatF, sortF, setSortF, searchQ, setSearchQ, nav, addCart, toggleWish, inWish, setQv }) {
+  const list = products && products.length ? products : PRODUCTS;
+  const filtered = list
     .filter(p => catF === 'all' || p.cat === catF)
     .filter(p => {
       if (!searchQ) return true;
@@ -42,13 +44,20 @@ export default function Shop({ lang, tr, isRTL, catF, setCatF, sortF, setSortF, 
             <input value={searchQ} onChange={e => setSearchQ(e.target.value)} placeholder={tr.nav.ph}
               style={{ padding: `9px 12px 9px ${isRTL ? '12px' : '32px'}`, border: `1px solid ${G.bdr}`, borderRadius: 6, fontSize: 13, fontFamily: FONT, outline: 'none', background: G.bg, color: G.text, width: 180 }} />
           </div>
-          <select value={sortF} onChange={e => setSortF(e.target.value)}
-            style={{ padding: '9px 12px', border: `1px solid ${G.bdr}`, borderRadius: 6, fontSize: 13, fontFamily: FONT, background: G.bg, color: G.text, outline: 'none', cursor: 'pointer' }}>
-            <option value="newest">{tr.shop.newest}</option>
-            <option value="best">{tr.shop.best}</option>
-            <option value="pAsc">{tr.shop.pAsc}</option>
-            <option value="pDesc">{tr.shop.pDesc}</option>
-          </select>
+          <PublicSelect
+            value={sortF}
+            onChange={setSortF}
+            isRTL={isRTL}
+            minWidth={168}
+            size="sm"
+            ariaLabel={tr.shop.title}
+            options={[
+              { value: 'newest', label: tr.shop.newest },
+              { value: 'best', label: tr.shop.best },
+              { value: 'pAsc', label: tr.shop.pAsc },
+              { value: 'pDesc', label: tr.shop.pDesc },
+            ]}
+          />
         </div>
       </div>
 
